@@ -1,5 +1,5 @@
 //
-//  CreateHabitViewController.swift
+//  CreateHabitOrIrregularEventViewController.swift
 //  TrackerApp
 //
 //  Created by Эмилия on 08.01.2024.
@@ -7,14 +7,22 @@
 
 import UIKit
 
-//MARK: - CreateHabitViewController
-final class CreateHabitViewController: UIViewController {
+//MARK: - CreateHabitOrIrregularEventViewController
+final class CreateHabitOrIrregularEventViewController: UIViewController {
     
     //MARK: - Properties
     weak var delegate: CreateHabitOrIrregularEventDelegate?
+    var typeOfTracker: TypeOfTracker?
+    
+    enum TypeOfTracker {
+        case habit
+        case irregularEvent
+    }
     
     //MARK: - Private properties
     private var shedule: [WeekDay] = []
+    
+    //TODO: временные MOCK данные
     private var category: String = "Default Category"
     private var color: UIColor = Color.colorSelection7
     private var emoji: String = "☺️"
@@ -22,7 +30,6 @@ final class CreateHabitViewController: UIViewController {
     //MARK: - UI Components
     private var createHabitLabel: UILabel = {
         let label = UILabel()
-        label.text = "Создание привычки"
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 16, weight: .medium)
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -34,12 +41,13 @@ final class CreateHabitViewController: UIViewController {
         textField.placeholder = "Введите название трекера"
         textField.leftView = UIView(frame: CGRect(x: 0, y: 0, width: 16, height: textField.frame.height))
         textField.leftViewMode = .always
-        textField.font = .systemFont(ofSize: 17, weight: .regular)
+        textField.font = .systemFont(ofSize: 16, weight: .regular)
         textField.textColor = Color.blackDay
         textField.backgroundColor = Color.backgroundDay
         textField.layer.masksToBounds = true
         textField.layer.cornerRadius = 16
         textField.delegate = self
+        textField.clearButtonMode = .whileEditing
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -48,6 +56,7 @@ final class CreateHabitViewController: UIViewController {
         let button = UIButton(type: .custom)
         button.setTitle("Категория", for: .normal)
         button.setTitleColor(Color.blackDay, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         button.contentHorizontalAlignment = .leading
         button.layer.masksToBounds = true
@@ -79,6 +88,7 @@ final class CreateHabitViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Расписание", for: .normal)
         button.setTitleColor(Color.blackDay, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 17, weight: .regular)
         button.contentEdgeInsets = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 0)
         button.contentHorizontalAlignment = .leading
         button.layer.masksToBounds = true
@@ -142,6 +152,27 @@ final class CreateHabitViewController: UIViewController {
         view.backgroundColor = Color.whiteDay
         addViews()
         layoutViews()
+        createHabitOrIrregularEvent()
+    }
+    
+    private func createHabitOrIrregularEvent() {
+        switch typeOfTracker {
+        case .habit:
+            createHabitLabel.text = "Новая привычка"
+        case .irregularEvent:
+            createHabitLabel.text = "Новое нерегулярное событие"
+            shedule = WeekDay.allCases
+        case .none: break
+        }
+    }
+    
+    private func updateCreateButton() {
+        if (nameHabitTextField.text?.isEmpty == false) && (shedule.isEmpty == false) {
+            createButton.isEnabled = true
+            createButton.backgroundColor = Color.blackDay
+        } else {
+            createButton.isEnabled = false
+        }
     }
     
     private func addViews() {
@@ -149,25 +180,15 @@ final class CreateHabitViewController: UIViewController {
         view.addSubview(nameHabitTextField)
         view.addSubview(categoryButton)
         view.addSubview(chevronCategoryImage)
-        view.addSubview(separatorLabel)
-        view.addSubview(sheduleButton)
-        view.addSubview(chevronSheduleImage)
         view.addSubview(cancelButton)
         view.addSubview(createButton)
-    }
-    
-    private func updateCreateButton() {
-        if nameHabitTextField.text == "" {
-            createButton.isEnabled = false
-        } else {
-            createButton.isEnabled = true
-            createButton.backgroundColor = Color.blackDay
+        
+        if typeOfTracker == .habit {
+            view.addSubview(separatorLabel)
+            view.addSubview(sheduleButton)
+            view.addSubview(chevronSheduleImage)
         }
     }
-}
-
-//MARK: - Extension
-@objc extension CreateHabitViewController {
     
     private func layoutViews() {
         NSLayoutConstraint.activate([
@@ -189,21 +210,6 @@ final class CreateHabitViewController: UIViewController {
             chevronCategoryImage.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
             chevronCategoryImage.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
             
-            separatorLabel.topAnchor.constraint(equalTo: categoryButton.bottomAnchor),
-            separatorLabel.heightAnchor.constraint(equalToConstant: 0.5),
-            separatorLabel.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor, constant: 16),
-            separatorLabel.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
-            
-            sheduleButton.topAnchor.constraint(equalTo: separatorLabel.bottomAnchor),
-            sheduleButton.heightAnchor.constraint(equalToConstant: 75),
-            sheduleButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            sheduleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            
-            chevronSheduleImage.heightAnchor.constraint(equalToConstant: 24),
-            chevronSheduleImage.widthAnchor.constraint(equalToConstant: 24),
-            chevronSheduleImage.centerYAnchor.constraint(equalTo: sheduleButton.centerYAnchor),
-            chevronSheduleImage.trailingAnchor.constraint(equalTo: sheduleButton.trailingAnchor, constant: -16),
-            
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.widthAnchor.constraint(equalToConstant: 166),
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -214,8 +220,30 @@ final class CreateHabitViewController: UIViewController {
             createButton.leadingAnchor.constraint(equalTo: cancelButton.trailingAnchor, constant: 8),
             createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
+        
+        if typeOfTracker == .habit {
+            NSLayoutConstraint.activate([
+                separatorLabel.topAnchor.constraint(equalTo: categoryButton.bottomAnchor),
+                separatorLabel.heightAnchor.constraint(equalToConstant: 0.5),
+                separatorLabel.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor, constant: 16),
+                separatorLabel.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
+                
+                sheduleButton.topAnchor.constraint(equalTo: separatorLabel.bottomAnchor),
+                sheduleButton.heightAnchor.constraint(equalToConstant: 75),
+                sheduleButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+                sheduleButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+                
+                chevronSheduleImage.heightAnchor.constraint(equalToConstant: 24),
+                chevronSheduleImage.widthAnchor.constraint(equalToConstant: 24),
+                chevronSheduleImage.centerYAnchor.constraint(equalTo: sheduleButton.centerYAnchor),
+                chevronSheduleImage.trailingAnchor.constraint(equalTo: sheduleButton.trailingAnchor, constant: -16),
+            ])
+        }
     }
-    
+}
+
+//MARK: - Extension
+@objc extension CreateHabitOrIrregularEventViewController {
     private func didTapCategoryButton() {
         // TODO: present CategoryViewController
     }
@@ -243,16 +271,26 @@ final class CreateHabitViewController: UIViewController {
 }
 
 //MARK: - UITextFieldDelegate
-extension CreateHabitViewController: UITextFieldDelegate {
+extension CreateHabitOrIrregularEventViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         updateCreateButton()
-        return nameHabitTextField.resignFirstResponder()
+        nameHabitTextField.resignFirstResponder()
+        return true
+    }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        updateCreateButton()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
     }
 }
 
 //MARK: - UITextFieldDelegate
-extension CreateHabitViewController: SheduleViewControllerDelegate {
+extension CreateHabitOrIrregularEventViewController: SheduleViewControllerDelegate {
     func createShedule(shedule: [WeekDay]) {
         self.shedule = shedule
+        updateCreateButton()
     }
 }

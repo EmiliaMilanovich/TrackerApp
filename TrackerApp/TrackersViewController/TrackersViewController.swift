@@ -37,6 +37,8 @@ final class TrackersViewController: UIViewController {
         datePicker.datePickerMode = .date
         datePicker.locale = Locale(identifier: "ru_RU")
         datePicker.preferredDatePickerStyle = .compact
+        datePicker.calendar.firstWeekday = 2
+        datePicker.translatesAutoresizingMaskIntoConstraints = false
         datePicker.addTarget(
             self,
             action: #selector(dateChanged),
@@ -52,6 +54,7 @@ final class TrackersViewController: UIViewController {
         textField.backgroundColor = Color.colorSearchField
         textField.textColor = Color.blackDay
         textField.delegate = self
+        textField.clearButtonMode = .whileEditing
         textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
@@ -70,7 +73,7 @@ final class TrackersViewController: UIViewController {
     
     private var stubLabel: UILabel = {
         let label = UILabel()
-        label.text = "Добавьте первый трекер"
+        label.text = "Что будем отслеживать?"
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -119,20 +122,10 @@ final class TrackersViewController: UIViewController {
     private func configureNavBar() {
         guard let navigationBar = navigationController?.navigationBar else { return }
         navigationItem.leftBarButtonItem = UIBarButtonItem(customView: addNewTrackerButton)
-        navigationItem.rightBarButtonItems = [UIBarButtonItem(customView: datePicker)]
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: datePicker)
         navigationBar.topItem?.title = "Трекеры"
         navigationBar.prefersLargeTitles = true
         navigationBar.topItem?.largeTitleDisplayMode = .always
-    }
-    
-    private func addViews() {
-        view.addSubview(navigationBar)
-        configureNavBar()
-        view.addSubview(searchTextField)
-        view.addSubview(stubView)
-        stubView.addSubview(stubLabel)
-        stubView.addSubview(stubImage)
-        view.addSubview(collectionViewTrackers)
     }
     
     private func reloadVisibleCategories() {
@@ -162,25 +155,20 @@ final class TrackersViewController: UIViewController {
         collectionViewTrackers.reloadData()
     }
     
-}
-
-//MARK: - Extension
-@objc extension TrackersViewController {
-    
-    private func addNewTracker() {
-        let createNewTrackerViewController = CreateNewTrackerViewController()
-        createNewTrackerViewController.delegate = self
-        present(createNewTrackerViewController, animated: true)
-    }
-    
-    private func dateChanged() {
-        currentDate = datePicker.date
-        reloadVisibleCategories()
-        dismiss(animated: true)
+    private func addViews() {
+        view.addSubview(navigationBar)
+        configureNavBar()
+        view.addSubview(searchTextField)
+        view.addSubview(stubView)
+        stubView.addSubview(stubLabel)
+        stubView.addSubview(stubImage)
+        view.addSubview(collectionViewTrackers)
     }
     
     private func layoutViews() {
         NSLayoutConstraint.activate([
+            datePicker.widthAnchor.constraint(equalToConstant: 120),
+            
             searchTextField.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             searchTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             searchTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -204,6 +192,21 @@ final class TrackersViewController: UIViewController {
             stubLabel.topAnchor.constraint(equalTo: stubImage.bottomAnchor, constant: 8),
             stubLabel.centerXAnchor.constraint(equalTo: stubView.centerXAnchor)
         ])
+    }
+}
+
+//MARK: - Extension
+@objc extension TrackersViewController {
+    private func addNewTracker() {
+        let createNewTrackerViewController = CreateNewTrackerViewController()
+        createNewTrackerViewController.delegate = self
+        present(createNewTrackerViewController, animated: true)
+    }
+    
+    private func dateChanged() {
+        currentDate = datePicker.date
+        reloadVisibleCategories()
+        dismiss(animated: true)
     }
 }
 
@@ -251,6 +254,14 @@ extension TrackersViewController: UITextFieldDelegate {
         reloadVisibleCategories()
         return true
     }
+    
+    func textFieldDidChangeSelection(_ textField: UITextField) {
+        reloadVisibleCategories()
+    }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        self.view.endEditing(true)
+    }
 }
 
 //MARK: - UICollectionViewDataSource, UICollectionViewDelegate
@@ -290,7 +301,7 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.width, height: 18)
+        return CGSize(width: collectionView.bounds.width, height: 25)
     }
 }
 

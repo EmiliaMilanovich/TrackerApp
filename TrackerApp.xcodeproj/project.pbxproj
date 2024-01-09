@@ -20,7 +20,7 @@
 		A082AC212B4B6BFF00565F1E /* TrackersCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC202B4B6BFF00565F1E /* TrackersCell.swift */; };
 		A082AC242B4B6C4200565F1E /* CreateNewTrackerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC232B4B6C4200565F1E /* CreateNewTrackerViewController.swift */; };
 		A082AC272B4B6C7D00565F1E /* CreateHabitOrIrregularEventDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC262B4B6C7D00565F1E /* CreateHabitOrIrregularEventDelegate.swift */; };
-		A082AC292B4B6C9700565F1E /* CreateHabitViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC282B4B6C9700565F1E /* CreateHabitViewController.swift */; };
+		A082AC292B4B6C9700565F1E /* CreateHabitOrIrregularEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC282B4B6C9700565F1E /* CreateHabitOrIrregularEventViewController.swift */; };
 		A082AC2B2B4B6CB700565F1E /* CreateIrregularEventViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC2A2B4B6CB700565F1E /* CreateIrregularEventViewController.swift */; };
 		A082AC2E2B4B6CF100565F1E /* SheduleViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC2D2B4B6CF100565F1E /* SheduleViewController.swift */; };
 		A082AC302B4B6D1600565F1E /* SheduleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC2F2B4B6D1600565F1E /* SheduleCell.swift */; };
@@ -46,7 +46,7 @@
 		A082AC202B4B6BFF00565F1E /* TrackersCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackersCell.swift; sourceTree = "<group>"; };
 		A082AC232B4B6C4200565F1E /* CreateNewTrackerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateNewTrackerViewController.swift; sourceTree = "<group>"; };
 		A082AC262B4B6C7D00565F1E /* CreateHabitOrIrregularEventDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateHabitOrIrregularEventDelegate.swift; sourceTree = "<group>"; };
-		A082AC282B4B6C9700565F1E /* CreateHabitViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateHabitViewController.swift; sourceTree = "<group>"; };
+		A082AC282B4B6C9700565F1E /* CreateHabitOrIrregularEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateHabitOrIrregularEventViewController.swift; sourceTree = "<group>"; };
 		A082AC2A2B4B6CB700565F1E /* CreateIrregularEventViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateIrregularEventViewController.swift; sourceTree = "<group>"; };
 		A082AC2D2B4B6CF100565F1E /* SheduleViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheduleViewController.swift; sourceTree = "<group>"; };
 		A082AC2F2B4B6D1600565F1E /* SheduleCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SheduleCell.swift; sourceTree = "<group>"; };
@@ -165,7 +165,7 @@
 			isa = PBXGroup;
 			children = (
 				A082AC262B4B6C7D00565F1E /* CreateHabitOrIrregularEventDelegate.swift */,
-				A082AC282B4B6C9700565F1E /* CreateHabitViewController.swift */,
+				A082AC282B4B6C9700565F1E /* CreateHabitOrIrregularEventViewController.swift */,
 				A082AC2A2B4B6CB700565F1E /* CreateIrregularEventViewController.swift */,
 				A082AC2C2B4B6CD700565F1E /* SheduleViewController */,
 			);
@@ -277,7 +277,7 @@
 				A082AC1F2B4B6BE200565F1E /* CategoriesCell.swift in Sources */,
 				A082AC392B4B6D9400565F1E /* WeekDay.swift in Sources */,
 				A082AC302B4B6D1600565F1E /* SheduleCell.swift in Sources */,
-				A082AC292B4B6C9700565F1E /* CreateHabitViewController.swift in Sources */,
+				A082AC292B4B6C9700565F1E /* CreateHabitOrIrregularEventViewController.swift in Sources */,
 				A082AC172B4B6B2C00565F1E /* StatsViewController.swift in Sources */,
 				A082AC352B4B6D5F00565F1E /* TrackerCategory.swift in Sources */,
 				A082AC152B4B6AFA00565F1E /* UIColor+Extensions.swift in Sources */,

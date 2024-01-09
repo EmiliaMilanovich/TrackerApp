@@ -19,7 +19,7 @@ final class TrackersCell: UICollectionViewCell {
     static let identifier = "TrackersCell"
     weak var delegate: TrackersCellDelegate?
     
-    //MARK: - Private properties
+    //MARK: - UI Components
     private var backgroundCellView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
@@ -132,10 +132,7 @@ final class TrackersCell: UICollectionViewCell {
         contentView.addSubview(counterDayLabel)
         contentView.addSubview(plusButton)
     }
-}
-
-//MARK: - Extension
-@objc extension TrackersCell {
+    
     private func layoutViews() {
         NSLayoutConstraint.activate([
             backgroundCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -153,18 +150,21 @@ final class TrackersCell: UICollectionViewCell {
             trackerNamelabel.trailingAnchor.constraint(equalTo: backgroundCellView.trailingAnchor, constant: -12),
             trackerNamelabel.bottomAnchor.constraint(equalTo: backgroundCellView.bottomAnchor, constant: 12),
             
-            counterDayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            counterDayLabel.leadingAnchor.constraint(equalTo: backgroundCellView.leadingAnchor, constant: 12),
             counterDayLabel.topAnchor.constraint(equalTo: backgroundCellView.bottomAnchor, constant: 16),
             counterDayLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -54),
             counterDayLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
             
-            plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            plusButton.trailingAnchor.constraint(equalTo: backgroundCellView.trailingAnchor, constant: -12),
             plusButton.topAnchor.constraint(equalTo: backgroundCellView.bottomAnchor, constant: 8),
             plusButton.heightAnchor.constraint(equalToConstant: 34),
             plusButton.widthAnchor.constraint(equalToConstant: 34)
         ])
     }
-    
+}
+
+//MARK: - Extension
+@objc extension TrackersCell {
     private func didTapPlusButton() {
         delegate?.didTapPlusButton(cell: self)
     }

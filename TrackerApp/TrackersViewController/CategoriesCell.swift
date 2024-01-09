@@ -13,7 +13,7 @@ final class CategoriesCell: UICollectionReusableView {
     //MARK: - Properties
     static let identifier = "CategoriesCell"
     
-    //MARK: - Private properties
+    //MARK: - UI Components
     private var categoriesLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 19, weight: .bold)
@@ -37,10 +37,8 @@ final class CategoriesCell: UICollectionReusableView {
     func configureHeaderCell(header: String) {
         categoriesLabel.text = header
     }
-}
-
-//MARK: - Extension
-@objc extension CategoriesCell {
+    
+    //MARK: - Private methods
     private func layoutViews() {
         NSLayoutConstraint.activate([
             categoriesLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),

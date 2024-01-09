@@ -16,7 +16,7 @@ protocol SheduleCellDelegate: AnyObject {
 final class SheduleCell: UITableViewCell {
     
     //MARK: - Properties
-    static let reuseIdentifier = "SheduleCell"
+    static let identifier = "SheduleCell"
     weak var delegate: SheduleCellDelegate?
     
     //MARK: - Private properties
@@ -70,20 +70,20 @@ final class SheduleCell: UITableViewCell {
         contentView.addSubview(dayLabel)
         contentView.addSubview(switcher)
     }
+    
+    private func layoutViews() {
+        NSLayoutConstraint.activate([
+            dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            dayLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            
+            switcher.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            switcher.centerYAnchor.constraint(equalTo: dayLabel.centerYAnchor)
+        ])
+    }
 }
 
 //MARK: - Extension
 @objc extension SheduleCell {
-    
-    private func layoutViews() {
-        NSLayoutConstraint.activate([
-            dayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            dayLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            switcher.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            switcher.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
-        ])
-    }
-    
     private func didTapSwitcher() {
         guard let day = day else {return}
         delegate?.addDay(day: day, isOn: switcher.isOn)
