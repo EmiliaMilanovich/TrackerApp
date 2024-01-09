@@ -28,6 +28,9 @@
 		A082AC352B4B6D5F00565F1E /* TrackerCategory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC342B4B6D5F00565F1E /* TrackerCategory.swift */; };
 		A082AC372B4B6D7500565F1E /* TrackerRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC362B4B6D7500565F1E /* TrackerRecord.swift */; };
 		A082AC392B4B6D9400565F1E /* WeekDay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC382B4B6D9400565F1E /* WeekDay.swift */; };
+		A082AC3B2B4C1C1700565F1E /* ColorsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC3A2B4C1C1700565F1E /* ColorsCell.swift */; };
+		A082AC3D2B4C1C2300565F1E /* EmojiCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC3C2B4C1C2300565F1E /* EmojiCell.swift */; };
+		A082AC3F2B4C26AF00565F1E /* HeaderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A082AC3E2B4C26AF00565F1E /* HeaderCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,6 +57,9 @@
 		A082AC342B4B6D5F00565F1E /* TrackerCategory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerCategory.swift; sourceTree = "<group>"; };
 		A082AC362B4B6D7500565F1E /* TrackerRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TrackerRecord.swift; sourceTree = "<group>"; };
 		A082AC382B4B6D9400565F1E /* WeekDay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekDay.swift; sourceTree = "<group>"; };
+		A082AC3A2B4C1C1700565F1E /* ColorsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorsCell.swift; sourceTree = "<group>"; };
+		A082AC3C2B4C1C2300565F1E /* EmojiCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmojiCell.swift; sourceTree = "<group>"; };
+		A082AC3E2B4C26AF00565F1E /* HeaderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +171,9 @@
 			isa = PBXGroup;
 			children = (
 				A082AC262B4B6C7D00565F1E /* CreateHabitOrIrregularEventDelegate.swift */,
+				A082AC3E2B4C26AF00565F1E /* HeaderCell.swift */,
+				A082AC3C2B4C1C2300565F1E /* EmojiCell.swift */,
+				A082AC3A2B4C1C1700565F1E /* ColorsCell.swift */,
 				A082AC282B4B6C9700565F1E /* CreateHabitViewController.swift */,
 				A082AC2A2B4B6CB700565F1E /* CreateIrregularEventViewController.swift */,
 				A082AC2C2B4B6CD700565F1E /* SheduleViewController */,
@@ -275,11 +284,14 @@
 				A082AC1A2B4B6B7E00565F1E /* TabBarController.swift in Sources */,
 				A082AC242B4B6C4200565F1E /* CreateNewTrackerViewController.swift in Sources */,
 				A082AC1F2B4B6BE200565F1E /* CategoriesCell.swift in Sources */,
+				A082AC3B2B4C1C1700565F1E /* ColorsCell.swift in Sources */,
 				A082AC392B4B6D9400565F1E /* WeekDay.swift in Sources */,
+				A082AC3D2B4C1C2300565F1E /* EmojiCell.swift in Sources */,
 				A082AC302B4B6D1600565F1E /* SheduleCell.swift in Sources */,
 				A082AC292B4B6C9700565F1E /* CreateHabitViewController.swift in Sources */,
 				A082AC172B4B6B2C00565F1E /* StatsViewController.swift in Sources */,
 				A082AC352B4B6D5F00565F1E /* TrackerCategory.swift in Sources */,
+				A082AC3F2B4C26AF00565F1E /* HeaderCell.swift in Sources */,
 				A082AC152B4B6AFA00565F1E /* UIColor+Extensions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

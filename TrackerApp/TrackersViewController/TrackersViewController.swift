@@ -83,12 +83,12 @@ final class TrackersViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(
-            TrackersCell.self,
-            forCellWithReuseIdentifier: TrackersCell.identifier)
-        collectionView.register(
             CategoriesCell.self,
             forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader,
             withReuseIdentifier: CategoriesCell.identifier)
+        collectionView.register(
+            TrackersCell.self,
+            forCellWithReuseIdentifier: TrackersCell.identifier)
         return collectionView
     }()
     
@@ -296,20 +296,19 @@ extension TrackersViewController: UICollectionViewDataSource, UICollectionViewDe
 
 //MARK: - UICollectionViewDelegateFlowLayout
 extension TrackersViewController: UICollectionViewDelegateFlowLayout {
-    
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: (collectionView.bounds.width / 2) - 16 - 4.5, height: 148)
+        CGSize(width: (collectionView.bounds.width / 2) - 16 - 4.5, height: 148)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        return UIEdgeInsets(top: 8, left: 16, bottom: 16, right: 16)
+        UIEdgeInsets(top: 8, left: 16, bottom: 16, right: 16)
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
-        return 16
+        16
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
-        return 9
+        9
     }
 }

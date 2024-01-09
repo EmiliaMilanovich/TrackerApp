@@ -1,5 +1,5 @@
 //
-//  CategoriesCell.swift
+//  EmojiCell.swift
 //  TrackerApp
 //
 //  Created by Эмилия on 08.01.2024.
@@ -7,17 +7,18 @@
 
 import UIKit
 
-//MARK: - CategoriesCell
-final class CategoriesCell: UICollectionReusableView {
+//MARK: - EmojiCell
+final class EmojiCell: UICollectionViewCell {
     
     //MARK: - Properties
-    static let identifier = "CategoriesCell"
+    static let identifier = "EmojiCell"
     
     //MARK: - Private properties
-    private var categoriesLabel: UILabel = {
+    
+    //MARK: - UI Components
+    let emojiLabel: UILabel = {
         let label = UILabel()
-        label.font = .systemFont(ofSize: 19, weight: .bold)
-        label.textColor = Color.blackDay
+        label.font = UIFont.systemFont(ofSize: 32)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -31,29 +32,30 @@ final class CategoriesCell: UICollectionReusableView {
     required init?(coder: NSCoder) {
         super.init(coder: coder)
     }
-    
     //MARK: - Methods
-    func configureHeaderCell(header: String) {
-        categoriesLabel.text = header
+    func configure(emoji: String, isSelected: Bool) {
+        emojiLabel.text = emoji
+        contentView.layer.cornerRadius = 16
+        contentView.backgroundColor = isSelected ? Color.lightGray : .clear
     }
     
+    //MARK: - Private methods
     private func setupCell() {
         addViews()
         layoutViews()
     }
     
     private func addViews() {
-        addSubview(categoriesLabel)
+        contentView.addSubview(emojiLabel)
     }
 }
 
 //MARK: - Extension
-@objc extension CategoriesCell {
+@objc extension EmojiCell {
     private func layoutViews() {
         NSLayoutConstraint.activate([
-            categoriesLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            categoriesLabel.topAnchor.constraint(equalTo: topAnchor),
-            categoriesLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            emojiLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            emojiLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
         ])
     }
 }

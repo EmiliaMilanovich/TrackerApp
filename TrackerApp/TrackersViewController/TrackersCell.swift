@@ -73,6 +73,7 @@ final class TrackersCell: UICollectionViewCell {
     //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
+        setupCell()
         contentView.layer.cornerRadius = 5
         contentView.layer.masksToBounds = true
     }
@@ -84,7 +85,6 @@ final class TrackersCell: UICollectionViewCell {
     //MARK: - Methods
     func configureCell(tracker: Tracker) {
         let color = tracker.color
-        setupCell()
         backgroundCellView.backgroundColor = color
         plusButton.backgroundColor = color
         trackerNamelabel.text = tracker.name
