@@ -27,7 +27,6 @@ final class SheduleViewController: UIViewController {
         label.text = "Расписание"
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -43,7 +42,6 @@ final class SheduleViewController: UIViewController {
         tableView.dataSource = self
         tableView.delegate = self
         tableView.register(SheduleCell.self, forCellReuseIdentifier: SheduleCell.identifier)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         return tableView
     }()
     
@@ -58,7 +56,6 @@ final class SheduleViewController: UIViewController {
             self,
             action: #selector(didCompletedButton),
             for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -81,9 +78,12 @@ final class SheduleViewController: UIViewController {
     }
     
     private func addViews() {
-        view.addSubview(sheduleLabel)
-        view.addSubview(tableView)
-        view.addSubview(completedButton)
+        [sheduleLabel,
+         tableView,
+         completedButton].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
     }
     
     private func layoutViews() {

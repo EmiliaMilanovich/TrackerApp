@@ -27,7 +27,6 @@ final class SheduleCell: UITableViewCell {
         let label = UILabel()
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 17, weight: .regular)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -39,7 +38,6 @@ final class SheduleCell: UITableViewCell {
             self,
             action: #selector(didTapSwitcher),
             for: .valueChanged)
-        switcher.translatesAutoresizingMaskIntoConstraints = false
         return switcher
     }()
     
@@ -67,8 +65,11 @@ final class SheduleCell: UITableViewCell {
     }
     
     private func addViews() {
-        contentView.addSubview(dayLabel)
-        contentView.addSubview(switcher)
+        [dayLabel,
+         switcher].forEach {
+            contentView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
     }
     
     private func layoutViews() {

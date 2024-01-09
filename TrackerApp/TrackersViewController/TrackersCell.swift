@@ -24,7 +24,6 @@ final class TrackersCell: UICollectionViewCell {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -35,7 +34,6 @@ final class TrackersCell: UICollectionViewCell {
         label.layer.cornerRadius = 12
         label.font = .systemFont(ofSize: 13, weight: .medium)
         label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -44,7 +42,6 @@ final class TrackersCell: UICollectionViewCell {
         label.textColor = Color.whiteDay
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -52,7 +49,6 @@ final class TrackersCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -66,7 +62,6 @@ final class TrackersCell: UICollectionViewCell {
             self,
             action: #selector(didTapPlusButton),
             for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -126,11 +121,18 @@ final class TrackersCell: UICollectionViewCell {
     }
     
     private func addViews() {
-        contentView.addSubview(backgroundCellView)
-        backgroundCellView.addSubview(emojiLabel)
-        backgroundCellView.addSubview(trackerNamelabel)
-        contentView.addSubview(counterDayLabel)
-        contentView.addSubview(plusButton)
+        [backgroundCellView,
+         counterDayLabel,
+         plusButton].forEach {
+            contentView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        [emojiLabel,
+         trackerNamelabel].forEach {
+            backgroundCellView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
     }
     
     private func layoutViews() {

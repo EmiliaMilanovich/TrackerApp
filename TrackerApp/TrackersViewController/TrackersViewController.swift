@@ -55,19 +55,16 @@ final class TrackersViewController: UIViewController {
         textField.textColor = Color.blackDay
         textField.delegate = self
         textField.clearButtonMode = .whileEditing
-        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
     private var stubView: UIView = {
         let view = UIView()
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
     private var stubImage: UIImageView = {
         let image = UIImageView(image: UIImage(named: "error1"))
-        image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
     
@@ -75,7 +72,6 @@ final class TrackersViewController: UIViewController {
         let label = UILabel()
         label.text = "Что будем отслеживать?"
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -84,7 +80,6 @@ final class TrackersViewController: UIViewController {
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collectionView.delegate = self
         collectionView.dataSource = self
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
         collectionView.register(
             TrackersCell.self,
             forCellWithReuseIdentifier: TrackersCell.identifier)
@@ -158,11 +153,19 @@ final class TrackersViewController: UIViewController {
     private func addViews() {
         view.addSubview(navigationBar)
         configureNavBar()
-        view.addSubview(searchTextField)
-        view.addSubview(stubView)
-        stubView.addSubview(stubLabel)
-        stubView.addSubview(stubImage)
-        view.addSubview(collectionViewTrackers)
+        
+        [searchTextField,
+         stubView,
+         collectionViewTrackers].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        [stubLabel,
+         stubImage].forEach {
+            stubView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }        
     }
     
     private func layoutViews() {

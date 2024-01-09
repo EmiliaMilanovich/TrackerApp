@@ -32,7 +32,6 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         let label = UILabel()
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -48,7 +47,6 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         textField.layer.cornerRadius = 16
         textField.delegate = self
         textField.clearButtonMode = .whileEditing
-        textField.translatesAutoresizingMaskIntoConstraints = false
         return textField
     }()
     
@@ -62,25 +60,21 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         button.layer.masksToBounds = true
         button.layer.cornerRadius = 16
         button.backgroundColor = Color.backgroundDay
-        button.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         button.addTarget(
             self,
             action: #selector(didTapCategoryButton),
             for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     private var chevronCategoryImage: UIImageView = {
         let image = UIImageView(image: UIImage(named: "chevron"))
-        image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
     
     private var separatorLabel: UILabel = {
         let label = UILabel()
         label.backgroundColor = Color.gray
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -99,13 +93,11 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             self,
             action: #selector(didTapSheludeButton),
             for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
     private var chevronSheduleImage: UIImageView = {
         let image = UIImageView(image: UIImage(named: "chevron"))
-        image.translatesAutoresizingMaskIntoConstraints = false
         return image
     }()
     
@@ -121,7 +113,6 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             self,
             action: #selector(didTapCancelButton),
             for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -136,7 +127,6 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             self,
             action: #selector(didTapCreateButton),
             for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -159,6 +149,7 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         switch typeOfTracker {
         case .habit:
             createHabitLabel.text = "Новая привычка"
+            categoryButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
         case .irregularEvent:
             createHabitLabel.text = "Новое нерегулярное событие"
             shedule = WeekDay.allCases
@@ -176,17 +167,23 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
     }
     
     private func addViews() {
-        view.addSubview(createHabitLabel)
-        view.addSubview(nameHabitTextField)
-        view.addSubview(categoryButton)
-        view.addSubview(chevronCategoryImage)
-        view.addSubview(cancelButton)
-        view.addSubview(createButton)
+        [createHabitLabel,
+         nameHabitTextField,
+         categoryButton,
+         chevronCategoryImage,
+         cancelButton,
+         createButton].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
         
         if typeOfTracker == .habit {
-            view.addSubview(separatorLabel)
-            view.addSubview(sheduleButton)
-            view.addSubview(chevronSheduleImage)
+            [separatorLabel,
+             sheduleButton,
+             chevronSheduleImage].forEach {
+                view.addSubview($0)
+                $0.translatesAutoresizingMaskIntoConstraints = false
+            }
         }
     }
     
