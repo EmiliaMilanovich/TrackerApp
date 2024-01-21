@@ -13,7 +13,7 @@ final class CategoriesCell: UICollectionReusableView {
     //MARK: - Properties
     static let identifier = "CategoriesCell"
     
-    //MARK: - Private properties
+    //MARK: - UI Components
     private var categoriesLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 19, weight: .bold)
@@ -37,6 +37,7 @@ final class CategoriesCell: UICollectionReusableView {
         categoriesLabel.text = header
     }
     
+    //MARK: - Private methods
     private func setupCell() {
         addViews()
         layoutViews()
@@ -45,10 +46,7 @@ final class CategoriesCell: UICollectionReusableView {
     private func addViews() {
         addSubview(categoriesLabel)
     }
-}
-
-//MARK: - Extension
-@objc extension CategoriesCell {
+    
     private func layoutViews() {
         NSLayoutConstraint.activate([
             categoriesLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
@@ -56,4 +54,5 @@ final class CategoriesCell: UICollectionReusableView {
             categoriesLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
     }
+
 }

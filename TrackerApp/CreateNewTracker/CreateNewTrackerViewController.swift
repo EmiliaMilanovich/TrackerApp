@@ -18,13 +18,12 @@ final class CreateNewTrackerViewController: UIViewController {
     //MARK: - Properties
     weak var delegate: CreateNewTrackerViewControllerDelegate?
     
-    //MARK: - Private properties
+    //MARK: - UI Components
     private var createTrackerLabel: UILabel = {
         let label = UILabel()
         label.text = "Создание трекера"
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -37,7 +36,6 @@ final class CreateNewTrackerViewController: UIViewController {
         button.backgroundColor = Color.blackDay
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(
             self,
             action: #selector(createHabit),
@@ -54,7 +52,6 @@ final class CreateNewTrackerViewController: UIViewController {
         button.backgroundColor = Color.blackDay
         button.layer.cornerRadius = 16
         button.layer.masksToBounds = true
-        button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(
             self,
             action: #selector(createIrregularEvent),
@@ -76,14 +73,14 @@ final class CreateNewTrackerViewController: UIViewController {
     }
     
     private func addViews() {
-        view.addSubview(createTrackerLabel)
-        view.addSubview(createHabitButton)
-        view.addSubview(createIrregularEventButton)
+        [createTrackerLabel,
+         createHabitButton,
+         createIrregularEventButton].forEach {
+            $0.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview($0)
+        }
     }
-}
-
-//MARK: - Extension
-@objc extension CreateNewTrackerViewController {
+    
     private func layoutViews() {
         NSLayoutConstraint.activate([
             createTrackerLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
@@ -100,15 +97,20 @@ final class CreateNewTrackerViewController: UIViewController {
             createIrregularEventButton.heightAnchor.constraint(equalToConstant: 60)
         ])
     }
-    
+}
+
+//MARK: - Extension
+@objc extension CreateNewTrackerViewController {
     private func createHabit() {
-        let createHabitViewController = CreateHabitViewController()
+        let createHabitViewController = CreateHabitOrIrregularEventViewController()
+        createHabitViewController.typeOfTracker = .habit
         createHabitViewController.delegate = self
         present(createHabitViewController, animated: true)
     }
     
     private func createIrregularEvent() {
-        let createIrregularEventViewController = CreateIrregularEventViewController()
+        let createIrregularEventViewController = CreateHabitOrIrregularEventViewController()
+        createIrregularEventViewController.typeOfTracker = .irregularEvent
         createIrregularEventViewController.delegate = self
         present(createIrregularEventViewController, animated: true)
     }
@@ -117,8 +119,6 @@ final class CreateNewTrackerViewController: UIViewController {
 //MARK: - CreateHabitOrIrregularEventDelegate
 extension CreateNewTrackerViewController: CreateHabitOrIrregularEventDelegate {
     func createTrackers(tracker: Tracker, category: String) {
-        let tracker = tracker
-        let category = category
         delegate?.createTrackers(tracker: tracker, category: category)
     }
 }

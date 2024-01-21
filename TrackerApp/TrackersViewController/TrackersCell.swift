@@ -9,7 +9,7 @@ import UIKit
 
 //MARK: - TrackersCellDelegate
 protocol TrackersCellDelegate: AnyObject {
-    func didTapPlusButton(cell: TrackersCell)
+    func didTapPlusButton(id: UUID)
 }
 
 //MARK: - TrackersCell
@@ -20,11 +20,14 @@ final class TrackersCell: UICollectionViewCell {
     weak var delegate: TrackersCellDelegate?
     
     //MARK: - Private properties
+    private var tracker: Tracker?
+    private var trackerId: UUID?
+    
+    //MARK: - UI Components
     private var backgroundCellView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
-        view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
     
@@ -35,7 +38,6 @@ final class TrackersCell: UICollectionViewCell {
         label.layer.cornerRadius = 12
         label.font = .systemFont(ofSize: 13, weight: .medium)
         label.textAlignment = .center
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -44,7 +46,6 @@ final class TrackersCell: UICollectionViewCell {
         label.textColor = Color.whiteDay
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 0
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -52,7 +53,6 @@ final class TrackersCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 12, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
@@ -66,7 +66,6 @@ final class TrackersCell: UICollectionViewCell {
             self,
             action: #selector(didTapPlusButton),
             for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -74,8 +73,6 @@ final class TrackersCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCell()
-        contentView.layer.cornerRadius = 5
-        contentView.layer.masksToBounds = true
     }
     
     required init?(coder: NSCoder) {
@@ -89,6 +86,7 @@ final class TrackersCell: UICollectionViewCell {
         plusButton.backgroundColor = color
         trackerNamelabel.text = tracker.name
         emojiLabel.text = tracker.emoji
+        self.trackerId = tracker.id
     }
     
     func updateRecord(days: Int, isCompleted: Bool) {
@@ -123,19 +121,25 @@ final class TrackersCell: UICollectionViewCell {
     private func setupCell() {
         addViews()
         layoutViews()
+        contentView.layer.cornerRadius = 5
+        contentView.layer.masksToBounds = true
     }
     
     private func addViews() {
-        contentView.addSubview(backgroundCellView)
-        backgroundCellView.addSubview(emojiLabel)
-        backgroundCellView.addSubview(trackerNamelabel)
-        contentView.addSubview(counterDayLabel)
-        contentView.addSubview(plusButton)
+        [backgroundCellView,
+         counterDayLabel,
+         plusButton].forEach {
+            contentView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
+        
+        [emojiLabel,
+         trackerNamelabel].forEach {
+            backgroundCellView.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
+        }
     }
-}
-
-//MARK: - Extension
-@objc extension TrackersCell {
+    
     private func layoutViews() {
         NSLayoutConstraint.activate([
             backgroundCellView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
@@ -153,19 +157,23 @@ final class TrackersCell: UICollectionViewCell {
             trackerNamelabel.trailingAnchor.constraint(equalTo: backgroundCellView.trailingAnchor, constant: -12),
             trackerNamelabel.bottomAnchor.constraint(equalTo: backgroundCellView.bottomAnchor, constant: 12),
             
-            counterDayLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 12),
+            counterDayLabel.leadingAnchor.constraint(equalTo: backgroundCellView.leadingAnchor, constant: 12),
             counterDayLabel.topAnchor.constraint(equalTo: backgroundCellView.bottomAnchor, constant: 16),
             counterDayLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -54),
             counterDayLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -24),
             
-            plusButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -12),
+            plusButton.trailingAnchor.constraint(equalTo: backgroundCellView.trailingAnchor, constant: -12),
             plusButton.topAnchor.constraint(equalTo: backgroundCellView.bottomAnchor, constant: 8),
             plusButton.heightAnchor.constraint(equalToConstant: 34),
             plusButton.widthAnchor.constraint(equalToConstant: 34)
         ])
     }
-    
+}
+
+//MARK: - Extension
+@objc extension TrackersCell {
     private func didTapPlusButton() {
-        delegate?.didTapPlusButton(cell: self)
+        guard let trackerId = trackerId else { return }
+        delegate?.didTapPlusButton(id: trackerId)
     }
 }

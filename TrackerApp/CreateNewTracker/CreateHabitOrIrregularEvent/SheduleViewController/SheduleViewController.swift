@@ -27,12 +27,11 @@ final class SheduleViewController: UIViewController {
         label.text = "Расписание"
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 16, weight: .medium)
-        label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     
     private lazy var tableView: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .insetGrouped)
+        let tableView = UITableView(frame: .zero)
         tableView.backgroundColor = Color.backgroundDay
         tableView.layer.masksToBounds = true
         tableView.layer.cornerRadius = 16
@@ -42,8 +41,7 @@ final class SheduleViewController: UIViewController {
         tableView.isScrollEnabled = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(SheduleCell.self, forCellReuseIdentifier: "SheduleCell")
-        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.register(SheduleCell.self, forCellReuseIdentifier: SheduleCell.identifier)
         return tableView
     }()
     
@@ -58,7 +56,6 @@ final class SheduleViewController: UIViewController {
             self,
             action: #selector(didCompletedButton),
             for: .touchUpInside)
-        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
     
@@ -76,38 +73,39 @@ final class SheduleViewController: UIViewController {
         layoutViews()
     }
     
-    private func addViews() {
-        view.addSubview(sheduleLabel)
-        view.addSubview(tableView)
-        view.addSubview(completedButton)
+    private func configureCompletedButton() {
+        completedButton.isEnabled = !weekDayAvailable.isEmpty
     }
     
-    private func configureCompletedButton() {
-        if weekDayAvailable.isEmpty {
-            completedButton.isEnabled = false
-        } else {
-            completedButton.isEnabled = true
+    private func addViews() {
+        [sheduleLabel,
+         tableView,
+         completedButton].forEach {
+            view.addSubview($0)
+            $0.translatesAutoresizingMaskIntoConstraints = false
         }
     }
-}
-
-//MARK: - Extension
-@objc extension SheduleViewController {
+    
     private func layoutViews() {
         NSLayoutConstraint.activate([
             sheduleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             sheduleLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
+            
+            tableView.heightAnchor.constraint(equalToConstant: 524),
             tableView.topAnchor.constraint(equalTo: sheduleLabel.bottomAnchor, constant: 30),
             tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            tableView.bottomAnchor.constraint(equalTo: completedButton.topAnchor, constant: -39),
+            
             completedButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -16),
             completedButton.heightAnchor.constraint(equalToConstant: 60),
             completedButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             completedButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
     }
-    
+}
+
+//MARK: - Extension
+@objc extension SheduleViewController {
     private func didCompletedButton() {
         delegate?.createShedule(shedule: weekDayAvailable)
         dismiss(animated: true)
@@ -136,8 +134,7 @@ extension SheduleViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: "SheduleCell", for: indexPath) as? SheduleCell
-        else { fatalError("Ячейка не создана") }
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: SheduleCell.identifier, for: indexPath) as? SheduleCell else { return UITableViewCell() }
         let day = WeekDay.allCases[indexPath.row]
         let isSwitch = false
         cell.configureCell(day: day, isSwitch: isSwitch)

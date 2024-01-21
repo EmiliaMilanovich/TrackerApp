@@ -37,6 +37,7 @@ final class HeaderCell: UICollectionReusableView {
         headerLabel.text = header
     }
     
+    //MARK: - Private methods
     private func setupCell() {
         addViews()
         layoutViews()
@@ -45,15 +46,13 @@ final class HeaderCell: UICollectionReusableView {
     private func addViews() {
         addSubview(headerLabel)
     }
-}
-
-//MARK: - Extension
-@objc extension HeaderCell {
+    
     private func layoutViews() {
         NSLayoutConstraint.activate([
             headerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
             headerLabel.topAnchor.constraint(equalTo: topAnchor),
             headerLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
     }
 }

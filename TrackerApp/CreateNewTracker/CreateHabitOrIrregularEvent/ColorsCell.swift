@@ -12,9 +12,7 @@ final class ColorsCell: UICollectionViewCell {
     
     //MARK: - Properties
     static let identifier = "ColorsCell"
-    
-    //MARK: - Private properties
-    
+        
     //MARK: - UI Components
     let colorLabel: UILabel = {
         let label = UILabel()
@@ -51,10 +49,7 @@ final class ColorsCell: UICollectionViewCell {
     private func addViews() {
         contentView.addSubview(colorLabel)
     }
-}
 
-//MARK: - Extension
-@objc extension ColorsCell {
     private func layoutViews() {
         NSLayoutConstraint.activate([
             colorLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),

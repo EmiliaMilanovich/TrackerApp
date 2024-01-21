@@ -12,9 +12,7 @@ final class EmojiCell: UICollectionViewCell {
     
     //MARK: - Properties
     static let identifier = "EmojiCell"
-    
-    //MARK: - Private properties
-    
+        
     //MARK: - UI Components
     let emojiLabel: UILabel = {
         let label = UILabel()
@@ -48,10 +46,7 @@ final class EmojiCell: UICollectionViewCell {
     private func addViews() {
         contentView.addSubview(emojiLabel)
     }
-}
 
-//MARK: - Extension
-@objc extension EmojiCell {
     private func layoutViews() {
         NSLayoutConstraint.activate([
             emojiLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),

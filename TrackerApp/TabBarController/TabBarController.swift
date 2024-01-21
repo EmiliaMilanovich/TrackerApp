@@ -21,7 +21,6 @@ final class TabBarController: UITabBarController {
         tabBar.backgroundColor = Color.whiteDay
         tabBar.tintColor = Color.active
         tabBar.barTintColor = Color.inActive
-        
         tabBar.layer.borderColor = Color.gray.cgColor
         tabBar.layer.borderWidth = 1
         tabBar.layer.masksToBounds = true
