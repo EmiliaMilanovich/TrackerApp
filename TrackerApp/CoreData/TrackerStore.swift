@@ -23,7 +23,7 @@ final class TrackerStore {
         self.init(context: context)
     }
 
-    init(context: NSManagedObjectContext) {
+    private init(context: NSManagedObjectContext) {
         self.context = context
     }
 
