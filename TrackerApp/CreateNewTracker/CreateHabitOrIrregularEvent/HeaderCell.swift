@@ -1,5 +1,5 @@
 //
-//  CategoriesCell.swift
+//  HeaderCell.swift
 //  TrackerApp
 //
 //  Created by Эмилия on 08.01.2024.
@@ -7,14 +7,14 @@
 
 import UIKit
 
-//MARK: - CategoriesCell
-final class CategoriesCell: UICollectionReusableView {
+//MARK: - HeaderCell
+final class HeaderCell: UICollectionReusableView {
     
     //MARK: - Properties
-    static let identifier = "CategoriesCell"
+    static let identifier = "HeaderCell"
     
-    //MARK: - UI Components
-    private var categoriesLabel: UILabel = {
+    //MARK: - Private properties
+    private var headerLabel: UILabel = {
         let label = UILabel()
         label.font = .systemFont(ofSize: 19, weight: .bold)
         label.textColor = Color.blackDay
@@ -33,8 +33,8 @@ final class CategoriesCell: UICollectionReusableView {
     }
     
     //MARK: - Methods
-    func configureHeaderCell(header: String) {
-        categoriesLabel.text = header
+    func configure(header: String) {
+        headerLabel.text = header
     }
     
     //MARK: - Private methods
@@ -44,15 +44,15 @@ final class CategoriesCell: UICollectionReusableView {
     }
     
     private func addViews() {
-        addSubview(categoriesLabel)
+        addSubview(headerLabel)
     }
     
     private func layoutViews() {
         NSLayoutConstraint.activate([
-            categoriesLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
-            categoriesLabel.topAnchor.constraint(equalTo: topAnchor),
-            categoriesLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
+            headerLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 24),
+            headerLabel.topAnchor.constraint(equalTo: topAnchor),
+            headerLabel.bottomAnchor.constraint(equalTo: bottomAnchor)
         ])
+        
     }
-
 }

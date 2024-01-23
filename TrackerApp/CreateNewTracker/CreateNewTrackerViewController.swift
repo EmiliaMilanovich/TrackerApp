@@ -109,10 +109,11 @@ final class CreateNewTrackerViewController: UIViewController {
     }
     
     private func createIrregularEvent() {
-        let createHabitViewController = CreateHabitOrIrregularEventViewController()
-        createHabitViewController.typeOfTracker = .irregularEvent
-        createHabitViewController.delegate = self
-        present(createHabitViewController, animated: true)    }
+        let createIrregularEventViewController = CreateHabitOrIrregularEventViewController()
+        createIrregularEventViewController.typeOfTracker = .irregularEvent
+        createIrregularEventViewController.delegate = self
+        present(createIrregularEventViewController, animated: true)
+    }
 }
 
 //MARK: - CreateHabitOrIrregularEventDelegate

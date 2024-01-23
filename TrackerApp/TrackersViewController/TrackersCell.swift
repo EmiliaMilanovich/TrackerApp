@@ -9,7 +9,7 @@ import UIKit
 
 //MARK: - TrackersCellDelegate
 protocol TrackersCellDelegate: AnyObject {
-    func didTapPlusButton(cell: TrackersCell)
+    func didTapPlusButton(id: UUID)
 }
 
 //MARK: - TrackersCell
@@ -18,6 +18,10 @@ final class TrackersCell: UICollectionViewCell {
     //MARK: - Properties
     static let identifier = "TrackersCell"
     weak var delegate: TrackersCellDelegate?
+    
+    //MARK: - Private properties
+    private var tracker: Tracker?
+    private var trackerId: UUID?
     
     //MARK: - UI Components
     private var backgroundCellView: UIView = {
@@ -68,8 +72,7 @@ final class TrackersCell: UICollectionViewCell {
     //MARK: - Lifecycle
     override init(frame: CGRect) {
         super.init(frame: frame)
-        contentView.layer.cornerRadius = 5
-        contentView.layer.masksToBounds = true
+        setupCell()
     }
     
     required init?(coder: NSCoder) {
@@ -79,11 +82,11 @@ final class TrackersCell: UICollectionViewCell {
     //MARK: - Methods
     func configureCell(tracker: Tracker) {
         let color = tracker.color
-        setupCell()
         backgroundCellView.backgroundColor = color
         plusButton.backgroundColor = color
         trackerNamelabel.text = tracker.name
         emojiLabel.text = tracker.emoji
+        self.trackerId = tracker.id
     }
     
     func updateRecord(days: Int, isCompleted: Bool) {
@@ -118,6 +121,8 @@ final class TrackersCell: UICollectionViewCell {
     private func setupCell() {
         addViews()
         layoutViews()
+        contentView.layer.cornerRadius = 5
+        contentView.layer.masksToBounds = true
     }
     
     private func addViews() {
@@ -168,6 +173,7 @@ final class TrackersCell: UICollectionViewCell {
 //MARK: - Extension
 @objc extension TrackersCell {
     private func didTapPlusButton() {
-        delegate?.didTapPlusButton(cell: self)
+        guard let trackerId = trackerId else { return }
+        delegate?.didTapPlusButton(id: trackerId)
     }
 }
