@@ -204,7 +204,12 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: CategoryCell.identifier, for: indexPath) as? CategoryCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: CategoryCell.identifier,
+            for: indexPath
+        ) as? CategoryCell else {
+            return UITableViewCell()
+        }
         
         cell.selectionStyle = .none
         cell.layer.masksToBounds = true

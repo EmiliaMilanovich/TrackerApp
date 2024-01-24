@@ -44,7 +44,7 @@ final class CategoryCell: UITableViewCell {
     }
     
     func selectedCategory() {
-        doneImageView.isHidden = !doneImageView.isHidden
+        doneImageView.isHidden.toggle()
     }
     
     //MARK: - Private methods
