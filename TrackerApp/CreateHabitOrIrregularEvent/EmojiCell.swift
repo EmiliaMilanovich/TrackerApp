@@ -21,7 +21,7 @@ final class EmojiCell: UICollectionViewCell {
         return label
     }()
     
-    //MARK: - Lifecycle
+    // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCell()

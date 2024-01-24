@@ -276,15 +276,9 @@ extension TrackersViewController: TrackersCellDelegate {
                 let record = TrackerRecord(id: id, date: currentDate)
                 try? createRecord(record: record)
             }
+            try? fetchRecord()
             collectionViewTrackers.reloadData()
         }
-    }
-}
-
-// MARK: - TrackerCategoryStoreDelegate
-extension TrackersViewController: TrackerCategoryStoreDelegate {
-    func didUpdateData(in store: TrackerCategoryStore) {
-        collectionViewTrackers.reloadData()
     }
 }
 

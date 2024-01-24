@@ -17,10 +17,7 @@ final class CategoryViewController: UIViewController {
     
     //MARK: - Properties
     weak var delegate: CategoryViewControllerDelegate?
-    
-    //MARK: - Private properties
-    private var categories: [TrackerCategory] = []
-    private let trackerCategoryStore = TrackerCategoryStore.shared
+    var viewModel: CategoryViewModel
     
     //MARK: - UiElements
     private var categoryLabel: UILabel = {
@@ -38,10 +35,11 @@ final class CategoryViewController: UIViewController {
         tableView.layer.cornerRadius = 16
         tableView.separatorStyle = .singleLine
         tableView.separatorColor = Color.gray
-        tableView.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(CategoryCell.self, forCellReuseIdentifier: CategoryCell.identifier)
+        tableView.register(
+            CategoryCell.self,
+            forCellReuseIdentifier: CategoryCell.identifier)
         return tableView
     }()
     
@@ -85,19 +83,35 @@ final class CategoryViewController: UIViewController {
         super.viewDidLoad()
         configure()
         checkEmptyCategories()
+        
+        viewModel.onChange = { [weak self] in
+            self?.tableView.reloadData()
+            self?.checkEmptyCategories()
+        }
     }
-
+    
+    //MARK: - Initializers
+    init() {
+        viewModel = CategoryViewModel()
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     // MARK: - Private methods
     private func configure() {
         view.backgroundColor = Color.whiteDay
         addViews()
         layoutViews()
     }
-        
+    
     private func checkEmptyCategories() {
-        try? fetchCategories()
+        try? viewModel.fetchCategories()
         tableView.reloadData()
-        if !categories.isEmpty {
+        
+        if !viewModel.categories.isEmpty {
             stubView.isHidden = true
             tableView.isHidden = false
         } else {
@@ -156,25 +170,12 @@ final class CategoryViewController: UIViewController {
     }
 }
 
-extension CategoryViewController {
-    private func fetchCategories() throws {
-        do {
-            let coreDataCategories = try trackerCategoryStore.fetchAllCategories()
-            categories = try coreDataCategories.compactMap { coreDataCategory in
-                return try trackerCategoryStore.decodingCategory(from: coreDataCategory)
-            }
-        } catch {
-            throw ErrorStore.error
-        }
-    }
-}
-
 //MARK: - NewCategoryViewControllerDelegate
 extension CategoryViewController: CreateNewCategoryViewControllerDelegate {
     func addNewCategories(category: String) {
-        if !categories.contains(where: { $0.title == category }) {
+        if !viewModel.categories.contains(where: { $0.title == category }) {
             let newCategory = TrackerCategory(title: category, trackers: [])
-            try? trackerCategoryStore.createCategory(newCategory)
+            viewModel.createCategory(newCategory)
             checkEmptyCategories()
             tableView.reloadData()
         }
@@ -184,21 +185,22 @@ extension CategoryViewController: CreateNewCategoryViewControllerDelegate {
 // MARK: - UITableViewDelegate, UITableViewDataSource
 extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let cell = tableView.cellForRow(at: indexPath) as? CategoryCell else { return }
+        cell.selectedCategory()
         
         guard let delegate = delegate else { return }
-        let category = categories[indexPath.row].title
+        let category = viewModel.selectCategory(at: indexPath)
         delegate.updateCategory(category: category)
         tableView.deselectRow(at: indexPath, animated: false)
         dismiss(animated: true)
-        }
-    
-    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 75
     }
     
-
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        75
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return categories.count
+        viewModel.countCategories()
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -206,15 +208,20 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
         
         cell.selectionStyle = .none
         cell.layer.masksToBounds = true
-        cell.layer.cornerRadius = 16
-    // TODO: закругление нижней части ячейки ячейки и добавить картинку с галочкой при выборе
         
-        cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
-        if indexPath.row == categories.count - 1 {
+        if viewModel.countCategories() == 1 {
             cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: UIScreen.main.bounds.width)
+            cell.layer.cornerRadius = 16
+            cell.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner, .layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else if indexPath.row == viewModel.countCategories() - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: UIScreen.main.bounds.width)
+            cell.layer.maskedCorners = [.layerMinXMaxYCorner, .layerMaxXMaxYCorner]
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 16, bottom: 0, right: 16)
+            cell.layer.cornerRadius = 0
         }
         
-        let category = categories[indexPath.row].title
+        let category = viewModel.selectCategory(at: indexPath)
         cell.configureCell(category: category)
         return cell
     }

@@ -27,7 +27,7 @@ final class CategoryCell: UITableViewCell {
         return imageView
     }()
     
-    //MARK: - Lifecycle
+    // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupCell()
@@ -41,6 +41,10 @@ final class CategoryCell: UITableViewCell {
     //MARK: - Methods
     func configureCell(category: String) {
         categoryLabel.text = category
+    }
+    
+    func selectedCategory() {
+        doneImageView.isHidden = !doneImageView.isHidden
     }
     
     //MARK: - Private methods

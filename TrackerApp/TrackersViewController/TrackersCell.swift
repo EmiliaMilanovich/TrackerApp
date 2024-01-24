@@ -69,7 +69,7 @@ final class TrackersCell: UICollectionViewCell {
         return button
     }()
     
-    //MARK: - Lifecycle
+    // MARK: - Initializers
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupCell()
