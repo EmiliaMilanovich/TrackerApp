@@ -43,7 +43,7 @@ final class TrackerCategoryStore: NSObject {
         return controller
     }()
     
-    //     MARK: - Initializers
+    //MARK: - Initializers
     convenience override init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
         self.init(context: context)

@@ -99,6 +99,13 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         return button
     }()
     
+    private var selectedCategoryLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = Color.gray
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        return label
+    }()
+    
     private var chevronCategoryImage: UIImageView = {
         let image = UIImageView(image: UIImage(named: "chevron"))
         return image
@@ -126,6 +133,13 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             action: #selector(didTapSheludeButton),
             for: .touchUpInside)
         return button
+    }()
+    
+    private var selectedSheduleLabel: UILabel = {
+        let label = UILabel()
+        label.textColor = Color.gray
+        label.font = UIFont.systemFont(ofSize: 17, weight: .regular)
+        return label
     }()
     
     private var chevronSheduleImage: UIImageView = {
@@ -212,7 +226,7 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         createHabitOrIrregularEvent()
         layoutViews()
     }
-    
+
     private func updateCreateButton() {
         if (nameHabitTextField.text?.isEmpty == false) &&
             (shedule.isEmpty == false) &&
@@ -237,7 +251,7 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         case .none: break
         }
     }
-    
+        
     private func addViews() {
         [createHabitLabel,
          scrollView,
@@ -251,6 +265,7 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
 
         [nameHabitTextField,
          categoryButton,
+         selectedCategoryLabel,
          chevronCategoryImage,
          emojiCollectionView,
          colorCollectionView].forEach {
@@ -261,6 +276,7 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         if typeOfTracker == .habit {
             [separatorLabel,
              sheduleButton,
+             selectedSheduleLabel,
              chevronSheduleImage].forEach {
                 contentView.addSubview($0)
                 $0.translatesAutoresizingMaskIntoConstraints = false
@@ -295,6 +311,11 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             categoryButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             categoryButton.heightAnchor.constraint(equalToConstant: 75),
             
+            selectedCategoryLabel.heightAnchor.constraint(equalToConstant: 22),
+            selectedCategoryLabel.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor, constant: 16),
+            selectedCategoryLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 43),
+            selectedCategoryLabel.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -56),
+
             chevronCategoryImage.heightAnchor.constraint(equalToConstant: 24),
             chevronCategoryImage.widthAnchor.constraint(equalToConstant: 24),
             chevronCategoryImage.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
@@ -322,6 +343,11 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
                 sheduleButton.heightAnchor.constraint(equalToConstant: 75),
                 sheduleButton.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor),
                 sheduleButton.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor),
+                
+                selectedSheduleLabel.heightAnchor.constraint(equalToConstant: 22),
+                selectedSheduleLabel.leadingAnchor.constraint(equalTo: sheduleButton.leadingAnchor, constant: 16),
+                selectedSheduleLabel.topAnchor.constraint(equalTo: sheduleButton.topAnchor, constant: 43),
+                selectedSheduleLabel.trailingAnchor.constraint(equalTo: sheduleButton.trailingAnchor, constant: -56),
                 
                 chevronSheduleImage.heightAnchor.constraint(equalToConstant: 24),
                 chevronSheduleImage.widthAnchor.constraint(equalToConstant: 24),
@@ -373,7 +399,6 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
     }
     
     private func didTapCreateButton() {
-        //TODO: раскрытие без дефолтных значений
         guard let trackerName = nameHabitTextField.text else { return }
         let newTracker = Tracker(
             id: UUID(),
@@ -406,6 +431,17 @@ extension CreateHabitOrIrregularEventViewController: UITextFieldDelegate {
 //MARK: - SheduleViewControllerDelegate
 extension CreateHabitOrIrregularEventViewController: SheduleViewControllerDelegate {
     func createShedule(shedule: [WeekDay]) {
+        if !shedule.isEmpty {
+            if shedule.count == 7 {
+                selectedSheduleLabel.text = "Каждый день"
+            } else {
+                let sortedSchedule = shedule.sorted { (firstDay, secondDay) -> Bool in
+                    return firstDay.rawValue < secondDay.rawValue
+                }
+                let filteredAndSortedSchedule = WeekDay.allCases.filter { sortedSchedule.contains($0) }
+                selectedSheduleLabel.text = filteredAndSortedSchedule.map { $0.shortName }.joined(separator: ", ")
+            }
+        }
         self.shedule = shedule
         updateCreateButton()
     }
@@ -415,6 +451,7 @@ extension CreateHabitOrIrregularEventViewController: SheduleViewControllerDelega
 extension CreateHabitOrIrregularEventViewController: CategoryViewControllerDelegate {
     func updateCategory(category: String) {
         self.category = category
+        selectedCategoryLabel.text = category
         updateCreateButton()
     }
 }
@@ -448,7 +485,11 @@ extension CreateHabitOrIrregularEventViewController: UICollectionViewDelegate, U
         updateCreateButton()
     }
     
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        cellForItemAt indexPath: IndexPath
+    ) -> UICollectionViewCell {
+        
         if collectionView == emojiCollectionView {
             guard let emojiCell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: EmojiCell.identifier,
@@ -474,7 +515,12 @@ extension CreateHabitOrIrregularEventViewController: UICollectionViewDelegate, U
         return UICollectionViewCell()
     }
     
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        viewForSupplementaryElementOfKind kind: String,
+        at indexPath: IndexPath
+    ) -> UICollectionReusableView {
+        
         guard let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
             withReuseIdentifier: HeaderCell.identifier,
@@ -492,23 +538,43 @@ extension CreateHabitOrIrregularEventViewController: UICollectionViewDelegate, U
 }
 
 extension CreateHabitOrIrregularEventViewController: UICollectionViewDelegateFlowLayout {
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        sizeForItemAt indexPath: IndexPath
+    ) -> CGSize {
         CGSize(width: 52, height: 52)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        insetForSectionAt section: Int
+    ) -> UIEdgeInsets {
         UIEdgeInsets(top: 25, left: 20, bottom: 25, right: 20)
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumLineSpacingForSectionAt section: Int
+    ) -> CGFloat {
         0
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        minimumInteritemSpacingForSectionAt section: Int
+    ) -> CGFloat {
         5
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
+    func collectionView(
+        _ collectionView: UICollectionView,
+        layout collectionViewLayout: UICollectionViewLayout,
+        referenceSizeForHeaderInSection section: Int
+    ) -> CGSize {
         return CGSize(width: collectionView.bounds.width, height: 43)
     }
 }

@@ -41,7 +41,7 @@ final class SheduleCell: UITableViewCell {
         return switcher
     }()
     
-    //MARK: - Lifecycle
+    // MARK: - Initializers
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupCell()

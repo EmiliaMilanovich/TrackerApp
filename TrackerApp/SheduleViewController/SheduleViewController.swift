@@ -41,7 +41,9 @@ final class SheduleViewController: UIViewController {
         tableView.isScrollEnabled = false
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.register(SheduleCell.self, forCellReuseIdentifier: SheduleCell.identifier)
+        tableView.register(
+            SheduleCell.self,
+            forCellReuseIdentifier: SheduleCell.identifier)
         return tableView
     }()
     
@@ -134,7 +136,11 @@ extension SheduleViewController: UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        guard let cell = tableView.dequeueReusableCell(withIdentifier: SheduleCell.identifier, for: indexPath) as? SheduleCell else { return UITableViewCell() }
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: SheduleCell.identifier,
+            for: indexPath
+        ) as? SheduleCell else { return UITableViewCell() }
+        
         let day = WeekDay.allCases[indexPath.row]
         let isSwitch = false
         cell.configureCell(day: day, isSwitch: isSwitch)
