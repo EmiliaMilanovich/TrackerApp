@@ -335,6 +335,7 @@ extension TrackersViewController {
         let tracker = visibleCategories[index.section].trackers[index.row]
         do {
             try trackerStore.deleteTrackers(tracker: tracker)
+            try trackerRecordStore.deleteAllRecordForID(for: tracker.id)
             try fetchCategories()
             reloadPinTrackers()
             reloadVisibleCategories()

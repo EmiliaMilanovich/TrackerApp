@@ -58,6 +58,16 @@ final class TrackerRecordStore: NSObject {
         }
     }
     
+    func deleteAllRecordForID(for id: UUID) throws {
+        let request = TrackerRecordCoreData.fetchRequest()
+        request.predicate = NSPredicate(format: "id == %@", id as CVarArg)
+        guard let trackersRecords = try? context.fetch(request) else { return }
+        trackersRecords.forEach {
+            context.delete($0)
+        }
+        try context.save()
+    }
+    
     func fetchRecords() throws -> [TrackerRecord] {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else {
             throw ErrorStore.error
