@@ -10,6 +10,9 @@ import UIKit
 //MARK: - OnboardingViewController
 final class OnboardingViewController: UIPageViewController {
     
+    //MARK: - Private properties
+    private let dataStorage = DataStorage.shared
+    
     //MARK: - UI Components
     private lazy var pages: [UIViewController] = [
         {
@@ -73,7 +76,6 @@ final class OnboardingViewController: UIPageViewController {
 @objc extension OnboardingViewController {
     private func didTapPageControl(_ sender: UIPageControl) {
         let tappedPageIndex = sender.currentPage
-        
         if tappedPageIndex >= 0 && tappedPageIndex < pages.count {
             let targetPage = pages[tappedPageIndex]
             guard let currentViewController = viewControllers?.first else { return }
@@ -91,7 +93,6 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
         _ pageViewController: UIPageViewController,
         viewControllerBefore viewController: UIViewController
     ) -> UIViewController? {
-        
         guard let viewControllerIndex = pages.firstIndex(of: viewController) else { return nil }
         let previousIndex = viewControllerIndex - 1
         guard previousIndex >= 0 else {
@@ -104,7 +105,6 @@ extension OnboardingViewController: UIPageViewControllerDataSource {
         _ pageViewController: UIPageViewController,
         viewControllerAfter viewController: UIViewController
     ) -> UIViewController? {
-        
         guard let viewControllerIndex = pages.firstIndex(of: viewController) else { return nil }
         let nextIndex = viewControllerIndex + 1
         guard nextIndex < pages.count else {
@@ -121,10 +121,20 @@ extension OnboardingViewController: UIPageViewControllerDelegate {
         didFinishAnimating finished: Bool,
         previousViewControllers: [UIViewController],
         transitionCompleted completed: Bool) {
-            
-        if let currentViewController = pageViewController.viewControllers?.first,
-           let currentIndex = pages.firstIndex(of: currentViewController) {
-            pageControl.currentPage = currentIndex
+            guard let currentViewController = viewControllers?.first else { return }
+            if let currentIndex = pages.firstIndex(of: currentViewController) {
+                let nextIndex = currentIndex + 1
+                if nextIndex < pages.count {
+                    let nextViewController = pages[nextIndex]
+                    self.setViewControllers([nextViewController], direction: .forward, animated: true, completion: nil)
+                    pageControl.currentPage = nextIndex
+                } else {
+                    guard let window = UIApplication.shared.windows.first else {
+                        fatalError("Invalid Configuration")
+                    }
+                    window.rootViewController = TabBarController()
+                    dataStorage.firstLaunchApplication = true
+                }
+            }
         }
-    }
 }

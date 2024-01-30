@@ -11,7 +11,7 @@ import CoreData
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
-//    MARK: - Properties
+    //    MARK: - Properties
     var window: UIWindow?
     
     // MARK: - Core Data stack
@@ -43,6 +43,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow()
         window?.rootViewController = TabBarController()
         window?.makeKeyAndVisible()
+        AnalyticsService.activate()
         return true
     }
     

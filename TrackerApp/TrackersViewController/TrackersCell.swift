@@ -22,18 +22,26 @@ final class TrackersCell: UICollectionViewCell {
     //MARK: - Private properties
     private var tracker: Tracker?
     private var trackerId: UUID?
+    private let analyticsService = AnalyticsService()
     
     //MARK: - UI Components
-    private var backgroundCellView: UIView = {
+    var backgroundCellView: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 16
         view.clipsToBounds = true
         return view
     }()
     
+    private lazy var pinnedImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "pin")
+        imageView.isHidden = true
+        return imageView
+    }()
+    
     private var emojiLabel: UILabel = {
         let label = UILabel()
-        label.backgroundColor = Color.whiteDay.withAlphaComponent(0.3)
+        label.backgroundColor = Color.white.withAlphaComponent(0.3)
         label.clipsToBounds = true
         label.layer.cornerRadius = 12
         label.font = .systemFont(ofSize: 13, weight: .medium)
@@ -43,7 +51,7 @@ final class TrackersCell: UICollectionViewCell {
     
     private var trackerNamelabel: UILabel = {
         let label = UILabel()
-        label.textColor = Color.whiteDay
+        label.textColor = Color.white
         label.font = .systemFont(ofSize: 12, weight: .medium)
         label.numberOfLines = 0
         return label
@@ -86,24 +94,19 @@ final class TrackersCell: UICollectionViewCell {
         plusButton.backgroundColor = color
         trackerNamelabel.text = tracker.name
         emojiLabel.text = tracker.emoji
+        pinnedImage.isHidden = !tracker.isPinned
         self.trackerId = tracker.id
     }
     
     func updateRecord(days: Int, isCompleted: Bool) {
         updatePlusButton(isCompleted: isCompleted)
-        updateCounterDayLabel(days: days)
+        counterDayLabel.text = formatDaysText(forDays: days)
     }
     
     //MARK: - Private methods
-    private func updateCounterDayLabel(days: Int) {
-        switch days % 10 {
-        case 1:
-            counterDayLabel.text = "\(days) день"
-        case 2...4:
-            counterDayLabel.text = "\(days) дня"
-        default:
-            counterDayLabel.text = "\(days) дней"
-        }
+    private func formatDaysText(forDays days: Int) -> String {
+        let daysCounter = String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
+        return daysCounter
     }
     
     private func updatePlusButton(isCompleted: Bool) {
@@ -134,7 +137,8 @@ final class TrackersCell: UICollectionViewCell {
         }
         
         [emojiLabel,
-         trackerNamelabel].forEach {
+         trackerNamelabel,
+         pinnedImage].forEach {
             backgroundCellView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
@@ -146,6 +150,11 @@ final class TrackersCell: UICollectionViewCell {
             backgroundCellView.topAnchor.constraint(equalTo: contentView.topAnchor),
             backgroundCellView.heightAnchor.constraint(equalToConstant: 90),
             backgroundCellView.widthAnchor.constraint(equalToConstant: 167),
+            
+            pinnedImage.topAnchor.constraint(equalTo: backgroundCellView.topAnchor, constant: 12),
+            pinnedImage.trailingAnchor.constraint(equalTo: backgroundCellView.trailingAnchor, constant: -4),
+            pinnedImage.heightAnchor.constraint(equalToConstant: 24),
+            pinnedImage.widthAnchor.constraint(equalToConstant: 24),
             
             emojiLabel.leadingAnchor.constraint(equalTo: backgroundCellView.leadingAnchor, constant: 12),
             emojiLabel.topAnchor.constraint(equalTo: backgroundCellView.topAnchor, constant: 12),
@@ -175,5 +184,6 @@ final class TrackersCell: UICollectionViewCell {
     private func didTapPlusButton() {
         guard let trackerId = trackerId else { return }
         delegate?.didTapPlusButton(id: trackerId)
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "track"])
     }
 }

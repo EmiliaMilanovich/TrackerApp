@@ -8,15 +8,39 @@
 import UIKit
 
 enum Color {
-    static let blackDay = UIColor(hexString: "#1A1B22")
-    static let blackNight = UIColor(hexString: "#FFFFFF")
     
-    static let whiteDay = UIColor(hexString: "#FFFFFF")
-    static let whiteNight = UIColor(hexString: "#1A1B22")
-
-    static let backgroundDay = UIColor(hexString: "#30E6E8EB")
-    static let backgroundNight = UIColor(hexString: "#85414141")
+    static let blackDay = UIColor { traitCollection -> UIColor in
+        switch traitCollection.userInterfaceStyle {
+        case .light, .unspecified: return UIColor(hexString: "#1A1B22")
+        case .dark: return UIColor(hexString: "#FFFFFF")
+        }
+    }
     
+    static let whiteDay = UIColor { traitCollection -> UIColor in
+        switch traitCollection.userInterfaceStyle {
+        case .light, .unspecified: return UIColor(hexString: "#FFFFFF")
+        case .dark: return UIColor(hexString: "#1A1B22")
+        }
+    }
+    
+    static let backgroundDay = UIColor { traitCollection -> UIColor in
+        switch traitCollection.userInterfaceStyle {
+        case .light, .unspecified: return UIColor(hexString: "#30E6E8EB")
+        case .dark: return UIColor(hexString: "#85414141")
+        }
+    }
+    
+    static let tabBarColor = UIColor { traitCollection -> UIColor in
+        switch traitCollection.userInterfaceStyle {
+        case .light, .unspecified: return UIColor(hexString: "#E6E8EB")
+        case .dark: return UIColor(hexString: "#000000")
+        }
+    }
+    
+    static let datePickerColor = UIColor(hexString: "#F0F0F0")
+    
+    static let black = UIColor(hexString: "#1A1B22")
+    static let white = UIColor(hexString: "#FFFFFF")
     static let gray = UIColor(hexString: "#AEAFB4")
     static let lightGray = UIColor(hexString: "#E6E8EB")
     
@@ -25,7 +49,7 @@ enum Color {
     
     static let active = blue
     static let inActive = gray
-
+    
     static let colorSelection1 = UIColor(hexString: "#FD4C49")
     static let colorSelection2 = UIColor(hexString: "#FF881E")
     static let colorSelection3 = UIColor(hexString: "#007BFA")
@@ -46,6 +70,4 @@ enum Color {
     static let colorSelection16 = UIColor(hexString: "#AD56DA")
     static let colorSelection17 = UIColor(hexString: "#8D72E6")
     static let colorSelection18 = UIColor(hexString: "#2FD058")
-    
-    static let colorSearchField = UIColor(hexString: "#12767680")
 }

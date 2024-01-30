@@ -14,7 +14,7 @@ enum ErrorStore: Error {
 
 //MARK: - TrackerCategoryStoreDelegate
 protocol TrackerCategoryStoreDelegate: AnyObject {
-    func didUpdateData(in store: TrackerCategoryStore)
+    func didUpdateCategory()
 }
 
 //MARK: - TrackerCategoryStore
@@ -23,6 +23,14 @@ final class TrackerCategoryStore: NSObject {
     //MARK: - Properties
     weak var delegate: TrackerCategoryStoreDelegate?
     static let shared = TrackerCategoryStore()
+    
+    var trackerCategory: [TrackerCategory] {
+        guard
+            let objects = self.fetchedResultsController?.fetchedObjects,
+            let trackerCategory = try? objects.map({ try self.trackerCategory(from: $0) })
+        else { return [] }
+        return trackerCategory
+    }
     
     //MARK: - Private properties
     private let context: NSManagedObjectContext
@@ -80,6 +88,12 @@ final class TrackerCategoryStore: NSObject {
             throw ErrorStore.error
         }
     }
+    
+    func updateCategory(categoryName: String, with newName: String) {
+        guard let categoryToUpdate = fetchedResultsController.fetchedObjects?.first(where: { $0.title == categoryName }) else { return }
+        categoryToUpdate.title = newName
+        try? context.save()
+    }
 }
 
 // MARK: - Extension
@@ -118,12 +132,22 @@ extension TrackerCategoryStore {
         request.predicate = NSPredicate(format: "title == %@", title)
         return try context.fetch(request).first
     }
+    
+    private func trackerCategory(from trackerCategoryCorData: TrackerCategoryCoreData) throws -> TrackerCategory {
+        guard let title = trackerCategoryCorData.title,
+              let trackerCoreDataArray = trackerCategoryCorData.trackers?.allObjects as? [TrackerCoreData] else {
+            throw ErrorStore.error
+        }
+        
+        let trackers = try trackerCoreDataArray.map { try TrackerStore.shared.decodingTrackers(from: $0) }
+        return TrackerCategory(title: title, trackers: trackers)
+    }
 }
 
 // MARK: - NSFetchedResultsControllerDelegate
 extension TrackerCategoryStore: NSFetchedResultsControllerDelegate {
     func controllerDidChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
-        delegate?.didUpdateData(in: self)
+        delegate?.didUpdateCategory()
     }
 }
 

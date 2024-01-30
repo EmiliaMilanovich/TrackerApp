@@ -19,7 +19,7 @@ final class PagesViewController: UIViewController {
         let label = UILabel()
         label.numberOfLines = 0
         label.font = UIFont.boldSystemFont(ofSize: 32)
-        label.tintColor = Color.blackDay
+        label.textColor = Color.black
         label.textAlignment = .center
         return label
     }()
@@ -28,7 +28,7 @@ final class PagesViewController: UIViewController {
         let button = UIButton()
         button.setTitle("Вот это технологии!", for: .normal)
         button.layer.cornerRadius = 16
-        button.backgroundColor = Color.blackDay
+        button.backgroundColor = Color.black
         button.addTarget(
             self,
             action: #selector(didTapButton),

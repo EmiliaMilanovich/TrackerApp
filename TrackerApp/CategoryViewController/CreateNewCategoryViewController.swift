@@ -7,9 +7,16 @@
 
 import UIKit
 
+//MARK: - TypeOfCategory
+enum TypeOfCategory {
+    case create
+    case edit
+}
+
 //MARK: - CreateNewCategoryViewControllerDelegate
 protocol CreateNewCategoryViewControllerDelegate: AnyObject {
     func addNewCategories(category: String)
+    func reloadCategories()
 }
 
 //MARK: - CreateNewCategoryViewController
@@ -17,7 +24,13 @@ final class CreateNewCategoryViewController: UIViewController {
     
     //MARK: - Properties
     weak var delegate: CreateNewCategoryViewControllerDelegate?
-        
+    var editingCategoryName: String?
+    var typeOfCategory: TypeOfCategory?
+    
+    //MARK: - Private properties
+    private var nameCategory: String = ""
+    private let trackerCategoryStore = TrackerCategoryStore.shared
+    
     //MARK: - UI Components
     private var categoryLabel: UILabel = {
         let label = UILabel()
@@ -60,6 +73,7 @@ final class CreateNewCategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+        editCategory()
     }
     
     //MARK: - Private methods
@@ -67,6 +81,13 @@ final class CreateNewCategoryViewController: UIViewController {
         view.backgroundColor = Color.whiteDay
         addViews()
         layoutViews()
+    }
+    
+    private func editCategory() {
+        if typeOfCategory == .edit {
+            nameCategoryTextField.text = editingCategoryName
+            categoryLabel.text = "Редактирование привычки"
+        }
     }
     
     private func updateCreateButton() {
@@ -107,11 +128,16 @@ final class CreateNewCategoryViewController: UIViewController {
 //MARK: - Extension
 @objc extension CreateNewCategoryViewController {
     func didTapCreateCategoryButton() {
-        guard let nameCategory = nameCategoryTextField.text else { return }
-        delegate?.addNewCategories(category: nameCategory)
+        if typeOfCategory == .create {
+            delegate?.addNewCategories(category: nameCategory)
+            
+        } else if typeOfCategory == .edit {
+            guard let editingCategoryName = editingCategoryName else { return }
+            trackerCategoryStore.updateCategory(categoryName: editingCategoryName, with: nameCategory)
+            delegate?.reloadCategories()
+        }
         dismiss(animated: true)
     }
-    
 }
 //MARK: - UITextFieldDelegate
 extension CreateNewCategoryViewController: UITextFieldDelegate {
@@ -123,6 +149,7 @@ extension CreateNewCategoryViewController: UITextFieldDelegate {
     
     func textFieldDidChangeSelection(_ textField: UITextField) {
         updateCreateButton()
+        nameCategory = textField.text ?? ""
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

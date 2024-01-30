@@ -13,4 +13,5 @@ struct Tracker: Hashable {
     let color: UIColor
     let emoji: String
     let shedule: [WeekDay]
+    let isPinned: Bool
 }

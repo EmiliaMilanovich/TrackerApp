@@ -10,6 +10,7 @@ import UIKit
 //MARK: - CreateNewTrackerViewControllerDelegate
 protocol CreateNewTrackerViewControllerDelegate: AnyObject {
     func createTrackers(tracker: Tracker, category: String)
+    func updateTracker(tracker: Tracker, category: String)
 }
 
 //MARK: - CreateNewTrackerViewController
@@ -118,6 +119,10 @@ final class CreateNewTrackerViewController: UIViewController {
 
 //MARK: - CreateHabitOrIrregularEventDelegate
 extension CreateNewTrackerViewController: CreateHabitOrIrregularEventDelegate {
+    func updateTracker(tracker: Tracker, category: String) {
+        delegate?.updateTracker(tracker: tracker, category: category)
+    }
+    
     func createTrackers(tracker: Tracker, category: String) {
         delegate?.createTrackers(tracker: tracker, category: category)
     }
