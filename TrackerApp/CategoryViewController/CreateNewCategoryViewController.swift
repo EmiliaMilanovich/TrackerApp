@@ -86,7 +86,7 @@ final class CreateNewCategoryViewController: UIViewController {
     private func editCategory() {
         if typeOfCategory == .edit {
             nameCategoryTextField.text = editingCategoryName
-            categoryLabel.text = "Редактирование привычки"
+            categoryLabel.text = "Редактирование категории"
         }
     }
     

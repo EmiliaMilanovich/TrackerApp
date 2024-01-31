@@ -223,10 +223,6 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         button.setTitle("Создать", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(Color.whiteDay, for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(didTapCreateButton),
-            for: .touchUpInside)
         return button
     }()
     
@@ -263,9 +259,17 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         case .habit:
             createHabitLabel.text = "Новая привычка"
             categoryButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+            createButton.addTarget(
+                self,
+                action: #selector(didTapCreateButton),
+                for: .touchUpInside)
         case .irregularEvent:
             createHabitLabel.text = "Новое нерегулярное событие"
             shedule = WeekDay.allCases
+            createButton.addTarget(
+                self,
+                action: #selector(didTapCreateButton),
+                for: .touchUpInside)
         case .edit:
             guard let daysCount = daysCount else { return }
             guard let editTracker = editTracker else { return }

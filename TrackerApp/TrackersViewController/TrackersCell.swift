@@ -22,7 +22,7 @@ final class TrackersCell: UICollectionViewCell {
     //MARK: - Private properties
     private var tracker: Tracker?
     private var trackerId: UUID?
-    private let analyticsService = AnalyticsService()
+    private let analyticsService = AnalyticsService.shared
     
     //MARK: - UI Components
     var backgroundCellView: UIView = {

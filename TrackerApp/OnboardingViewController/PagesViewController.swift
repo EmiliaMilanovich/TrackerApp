@@ -14,6 +14,9 @@ final class PagesViewController: UIViewController {
     var descriptionText: String?
     var backgroundImage: UIImage?
     
+    //MARK: - Private properties
+    private let dataStorage = DataStorage.shared
+    
     //MARK: - UI Components
     private var descriptionLabel: UILabel = {
         let label = UILabel()
@@ -91,5 +94,6 @@ final class PagesViewController: UIViewController {
             fatalError("Invalid Configuration")
         }
         window.rootViewController = TabBarController()
+        dataStorage.firstLaunchApplication = true
     }
 }

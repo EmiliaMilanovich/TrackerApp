@@ -22,7 +22,7 @@ final class TrackersViewController: UIViewController {
     private let trackerCategoryStore = TrackerCategoryStore.shared
     private let trackerRecordStore = TrackerRecordStore.shared
     private let trackerStore = TrackerStore.shared
-    private let analyticsService = AnalyticsService()
+    private let analyticsService = AnalyticsService.shared
     
     //MARK: - UI Components
     private var navigationBar: UINavigationBar = {
@@ -129,10 +129,11 @@ final class TrackersViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         try? fetchCategories()
+        try? fetchRecord()
         configure()
         reloadPinTrackers()
         reloadVisibleCategories()
-        try? fetchRecord()
+        collectionViewTrackers.reloadData()
     }
     
     //MARK: - Private methods
@@ -204,8 +205,8 @@ final class TrackersViewController: UIViewController {
     private func filteringTrackers(completed: Bool) {
         visibleCategories = visibleCategories.compactMap { category in
             let trackers = category.trackers.filter { tracker in
-                completed ? isTrackersRecordCompletedToday(id: tracker.id, date: currentDate)
-                : !isTrackersRecordCompletedToday(id: tracker.id, date: currentDate)
+                completed ? isTrackersRecordCompletedToday(id: tracker.id, date: datePicker.date)
+                : !isTrackersRecordCompletedToday(id: tracker.id, date: datePicker.date)
             }
             if trackers.isEmpty { return nil }
             return TrackerCategory(title: category.title, trackers: trackers)
@@ -299,12 +300,13 @@ final class TrackersViewController: UIViewController {
     private func addNewTracker() {
         let createNewTrackerViewController = CreateNewTrackerViewController()
         createNewTrackerViewController.delegate = self
-        present(createNewTrackerViewController, animated: true)
         analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "add_track"])
+        present(createNewTrackerViewController, animated: true)
     }
     
     private func dateChanged() {
         currentDate = datePicker.date
+        reloadPinTrackers()
         reloadVisibleCategories()
         dismiss(animated: true)
     }
@@ -313,8 +315,8 @@ final class TrackersViewController: UIViewController {
         let filtersViewController = FiltersViewController()
         filtersViewController.delegate = self
         filtersViewController.selectedFilter = selectedFilter
-        present(filtersViewController, animated: true)
         analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "filter"])
+        present(filtersViewController, animated: true)
     }
 }
 
@@ -414,15 +416,12 @@ extension TrackersViewController {
     }
     
     private func editingTrackers(category: TrackerCategory, tracker: Tracker) {
-        let tracker = tracker
-        let category = category.title
         let daysCount = completedTrackers.filter { $0.id == tracker.id }.count
-        
         let createHabitViewController = CreateHabitOrIrregularEventViewController()
         createHabitViewController.typeOfTracker = .edit
         createHabitViewController.delegate = self
         createHabitViewController.daysCount = daysCount
-        createHabitViewController.editCategory = category
+        createHabitViewController.editCategory = category.title
         createHabitViewController.editTracker = tracker
         present(createHabitViewController, animated: true)
     }
@@ -441,6 +440,8 @@ extension TrackersViewController: CreateNewTrackerViewControllerDelegate, Create
     func updateTracker(tracker: Tracker, category: String) {
         try? trackerStore.updateTracker(with: tracker)
         try? fetchCategories()
+        reloadPinTrackers()
+        reloadVisibleCategories()
         collectionViewTrackers.reloadData()
     }
 }
@@ -456,6 +457,8 @@ extension TrackersViewController: TrackersCellDelegate {
                 try? createRecord(record: record)
             }
             try? fetchRecord()
+            reloadPinTrackers()
+            reloadVisibleCategories()
             collectionViewTrackers.reloadData()
         }
     }
@@ -503,7 +506,6 @@ extension TrackersViewController: UICollectionViewDataSource {
         ) as? TrackersCell else {
             return UICollectionViewCell()
         }
-        
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let daysCount = completedTrackers.filter { $0.id == tracker.id }.count
         let isCompleted = completedTrackers.contains { $0.id == tracker.id && $0.date == currentDate }

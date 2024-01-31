@@ -74,8 +74,6 @@ final class TrackerStore {
             let existingTrackers = try context.fetch(fetchRequest)
             
             if let existingTracker = existingTrackers.first {
-//                existingTracker.setValue(tracker.name, forKey: "name")
-//                existingTracker.setValue(tracker.emoji, forKey: "emoji")
                 existingTracker.id = tracker.id
                 existingTracker.name = tracker.name
                 existingTracker.color = UIColorMarshalling.hexString(from: tracker.color)
