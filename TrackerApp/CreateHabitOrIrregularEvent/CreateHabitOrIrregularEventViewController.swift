@@ -243,6 +243,7 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
     
     private func updateCreateButton() {
         if (nameHabitTextField.text?.isEmpty == false) &&
+            (category.isEmpty == false) &&
             (shedule.isEmpty == false) &&
             (selectedEmoji != nil) &&
             (selectedColor != nil) {

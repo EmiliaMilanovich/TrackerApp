@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		195D90CB5AC359B698A94FC1 /* Pods_TrackerAppTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D6617C1568C23F9ECD58159 /* Pods_TrackerAppTests.framework */; };
 		23553B41850E75091666837F /* Pods_TrackerApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8CB09BC2FA8844D180CD1336 /* Pods_TrackerApp.framework */; };
 		A00226B22B50026300B81A5F /* CoreDataModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = A00226B02B50026300B81A5F /* CoreDataModel.xcdatamodeld */; };
 		A00226B42B500C4600B81A5F /* TrackerStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A00226B32B500C4600B81A5F /* TrackerStore.swift */; };
@@ -131,6 +132,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A003CF082B6820D300F6B4C8 /* SnapshotTesting in Frameworks */,
+				195D90CB5AC359B698A94FC1 /* Pods_TrackerAppTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -371,8 +373,6 @@
 			dependencies = (
 			);
 			name = TrackerApp;
-			packageProductDependencies = (
-			);
 			productName = TrackerApp;
 			productReference = A0A7E4BA2B67B67F00B1A033 /* TrackerApp.app */;
 			productType = "com.apple.product-type.application";
@@ -381,6 +381,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = A0A7E4AB2B6726E000B1A033 /* Build configuration list for PBXNativeTarget "TrackerAppTests" */;
 			buildPhases = (
+				14629B74E30FA70844D98EDC /* [CP] Check Pods Manifest.lock */,
 				A0A7E4A12B6726E000B1A033 /* Sources */,
 				A0A7E4A22B6726E000B1A033 /* Frameworks */,
 				A0A7E4A32B6726E000B1A033 /* Resources */,
@@ -462,6 +463,28 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		14629B74E30FA70844D98EDC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TrackerAppTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		54CA20E9934682C4AEAB1FD3 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -646,7 +669,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -701,7 +724,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
@@ -773,6 +796,7 @@
 		};
 		A0A7E4AC2B6726E000B1A033 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8755893990C5361CF3855552 /* Pods-TrackerAppTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
@@ -791,6 +815,7 @@
 		};
 		A0A7E4AD2B6726E000B1A033 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 023136AE5912094709402494 /* Pods-TrackerAppTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;

@@ -23,6 +23,21 @@ final class TrackerRecordStore: NSObject {
     //MARK: - Private properties
     private let context: NSManagedObjectContext
     
+    private lazy var fetchedResultsController: NSFetchedResultsController<TrackerRecordCoreData>! = {
+        let request = NSFetchRequest<TrackerRecordCoreData>(entityName: "TrackerRecordCoreData")
+        let sortDescriptor = NSSortDescriptor(keyPath: \TrackerRecordCoreData.id, ascending: true)
+        request.sortDescriptors = [sortDescriptor]
+        let controller = NSFetchedResultsController(
+            fetchRequest: request,
+            managedObjectContext: context,
+            sectionNameKeyPath: nil,
+            cacheName: nil
+        )
+        controller.delegate = self
+        try? controller.performFetch()
+        return controller
+    }()
+    
     // MARK: - Initializers
     convenience override init() {
         let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
@@ -87,6 +102,8 @@ final class TrackerRecordStore: NSObject {
             throw ErrorStore.error
         }
     }
+    
+    
 }
 
 //MARK: - NSFetchedResultsControllerDelegate

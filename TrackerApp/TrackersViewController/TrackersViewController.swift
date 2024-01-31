@@ -108,6 +108,7 @@ final class TrackersViewController: UIViewController {
         button.setTitleColor(Color.white, for: .normal)
         button.backgroundColor = Color.blue
         button.layer.cornerRadius = 16
+        button.isHidden = true
         button.addTarget(
             self, action:
                 #selector(didTapFilterButton),
@@ -131,9 +132,7 @@ final class TrackersViewController: UIViewController {
         try? fetchCategories()
         try? fetchRecord()
         configure()
-        reloadPinTrackers()
         reloadVisibleCategories()
-        collectionViewTrackers.reloadData()
     }
     
     //MARK: - Private methods
@@ -144,7 +143,6 @@ final class TrackersViewController: UIViewController {
             filterButton.isHidden = false
         } else {
             stubView.isHidden = false
-            filterButton.isHidden = true
             collectionViewTrackers.isHidden = true
         }
     }
@@ -218,6 +216,11 @@ final class TrackersViewController: UIViewController {
             let isSameDay = Calendar.current.isDate(record.date, inSameDayAs: date)
             return record.id == id && isSameDay
         }
+    }
+    
+    private func сomparOfTrackerDates(date1: Date, date2: Date) -> Bool {
+        let calendar = Calendar.current
+        return calendar.compare(date1, to: date2, toGranularity: .day) == .orderedSame
     }
     
     private func configureStubView() {
@@ -306,7 +309,6 @@ final class TrackersViewController: UIViewController {
     
     private func dateChanged() {
         currentDate = datePicker.date
-        reloadPinTrackers()
         reloadVisibleCategories()
         dismiss(animated: true)
     }
@@ -328,6 +330,7 @@ extension TrackersViewController {
             categories = try coreDataCategories.compactMap { coreDataCategory in
                 return try trackerCategoryStore.decodingCategory(from: coreDataCategory)
             }
+            reloadPinTrackers()
         } catch {
             throw ErrorStore.error
         }
@@ -339,7 +342,6 @@ extension TrackersViewController {
             try trackerStore.deleteTrackers(tracker: tracker)
             try trackerRecordStore.deleteAllRecordForID(for: tracker.id)
             try fetchCategories()
-            reloadPinTrackers()
             reloadVisibleCategories()
         } catch {
             throw ErrorStore.error
@@ -377,7 +379,6 @@ extension TrackersViewController {
         do {
             try trackerStore.pinTrackerCoreData(tracker)
             try? fetchCategories()
-            reloadPinTrackers()
             reloadVisibleCategories()
         } catch {
             throw ErrorStore.error
@@ -408,13 +409,6 @@ extension TrackersViewController: FiltersViewControllerDelegate {
 
 // MARK: - Edit Tracker
 extension TrackersViewController {
-    func trackerUpdate(_ tracker: Tracker, category: String) {
-        try? trackerStore.updateTracker(with: tracker)
-        try? fetchCategories()
-        reloadPinTrackers()
-        reloadVisibleCategories()
-    }
-    
     private func editingTrackers(category: TrackerCategory, tracker: Tracker) {
         let daysCount = completedTrackers.filter { $0.id == tracker.id }.count
         let createHabitViewController = CreateHabitOrIrregularEventViewController()
@@ -434,15 +428,12 @@ extension TrackersViewController: CreateNewTrackerViewControllerDelegate, Create
         try? fetchCategories()
         checkEmptyCategories()
         reloadVisibleCategories()
-        collectionViewTrackers.reloadData()
     }
     
     func updateTracker(tracker: Tracker, category: String) {
         try? trackerStore.updateTracker(with: tracker)
         try? fetchCategories()
-        reloadPinTrackers()
         reloadVisibleCategories()
-        collectionViewTrackers.reloadData()
     }
 }
 
@@ -456,11 +447,22 @@ extension TrackersViewController: TrackersCellDelegate {
                 let record = TrackerRecord(id: id, date: currentDate)
                 try? createRecord(record: record)
             }
-            try? fetchRecord()
-            reloadPinTrackers()
-            reloadVisibleCategories()
             collectionViewTrackers.reloadData()
         }
+    }
+}
+
+// MARK: - TrackerCategoryStoreDelegate
+extension TrackersViewController: TrackerCategoryStoreDelegate {
+    func didUpdateCategory() {
+        collectionViewTrackers.reloadData()
+    }
+}
+
+extension TrackersViewController: TrackerRecordStoreDelegate {
+    func didUpdateData(in store: TrackerRecordStore) {
+        try? fetchRecord()
+        collectionViewTrackers.reloadData()
     }
 }
 
@@ -508,13 +510,15 @@ extension TrackersViewController: UICollectionViewDataSource {
         }
         let tracker = visibleCategories[indexPath.section].trackers[indexPath.row]
         let daysCount = completedTrackers.filter { $0.id == tracker.id }.count
-        let isCompleted = completedTrackers.contains { $0.id == tracker.id && $0.date == currentDate }
+        let isCompleted = completedTrackers.contains { $0.id == tracker.id && сomparOfTrackerDates(date1: $0.date, date2: currentDate) }
         cell.delegate = self
         cell.prepareForReuse()
         cell.configureCell(tracker: tracker)
         cell.updateRecord(days: daysCount, isCompleted: isCompleted)
         return cell
     }
+    
+    
 }
 
 //MARK: - UICollectionViewDelegate
