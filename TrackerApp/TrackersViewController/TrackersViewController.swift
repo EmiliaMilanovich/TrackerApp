@@ -449,6 +449,7 @@ extension TrackersViewController: TrackersCellDelegate {
             }
             collectionViewTrackers.reloadData()
         }
+        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "track"])
     }
 }
 

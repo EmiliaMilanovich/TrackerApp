@@ -22,7 +22,6 @@ final class TrackersCell: UICollectionViewCell {
     //MARK: - Private properties
     private var tracker: Tracker?
     private var trackerId: UUID?
-    private let analyticsService = AnalyticsService.shared
     
     //MARK: - UI Components
     var backgroundCellView: UIView = {
@@ -184,6 +183,5 @@ final class TrackersCell: UICollectionViewCell {
     private func didTapPlusButton() {
         guard let trackerId = trackerId else { return }
         delegate?.didTapPlusButton(id: trackerId)
-        analyticsService.report(event: "click", params: ["screen" : "Main", "item" : "track"])
     }
 }

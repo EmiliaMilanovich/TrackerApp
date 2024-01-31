@@ -14,8 +14,12 @@ protocol FiltersViewControllerDelegate: AnyObject {
 
 // MARK: - FiltersViewController
 final class FiltersViewController: UIViewController {
+    
+    //MARK: - Properties
     var selectedFilter: Filter?
     weak var delegate: FiltersViewControllerDelegate?
+    
+    //MARK: - Private properties
     private let filters: [Filter] = Filter.allCases
     
     //MARK: - UI Components

@@ -89,14 +89,7 @@ final class CategoryViewController: UIViewController {
             self?.tableView.reloadData()
         }
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        try? viewModel.fetchCategories()
-        checkEmptyCategories()
-        tableView.reloadData()
-    }
-    
+        
     //MARK: - Initializers
     init() {
         viewModel = CategoryViewModel()

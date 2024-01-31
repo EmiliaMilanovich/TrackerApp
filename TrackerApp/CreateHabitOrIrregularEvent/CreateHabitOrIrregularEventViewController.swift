@@ -272,9 +272,11 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
                 action: #selector(didTapCreateButton),
                 for: .touchUpInside)
         case .edit:
-            guard let daysCount = daysCount else { return }
-            guard let editTracker = editTracker else { return }
-            guard let editCategory = editCategory else { return }
+            guard
+                let daysCount = daysCount,
+                let editTracker = editTracker,
+                let editCategory = editCategory
+            else { return }
             createHabitLabel.text = "Редактирование привычки"
             completedDaysLabel.isHidden = false
             categoryButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
@@ -296,8 +298,8 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
     }
     
     private func formatDaysText(forDays days: Int) -> String {
-        let daysCounter = String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
-        return daysCounter
+        String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
+        
     }
     
     private func addViews() {

@@ -71,7 +71,6 @@ final class StatsViewController: UIViewController {
         super.viewWillAppear(animated)
         try? fetchStats()
         checkEmptyStats()
-//        collectionView.reloadData()
     }
     
     //MARK: - Private methods
@@ -100,7 +99,9 @@ final class StatsViewController: UIViewController {
             stats.removeAll()
         } else {
             stats = [
-                .init(title: "Трекеров завершено", count: "\(completedTrackers.count)")
+                Stats(
+                    title: "Трекеров завершено",
+                    count: "\(completedTrackers.count)")
             ]
         }
     }

@@ -14,14 +14,14 @@ final class StatsCell: UICollectionViewCell {
     static let identifier = "StatsCell"
     
     //MARK: - UI Components
-    lazy var countLabel: UILabel = {
+    private lazy var countLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 34)
         label.textAlignment = .left
         return label
     }()
     
-    lazy var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 12)
         label.textAlignment = .left
