@@ -7,9 +7,17 @@
 
 import UIKit
 
+//MARK: - TypeOfTracker
+enum TypeOfTracker {
+    case habit
+    case irregularEvent
+    case edit
+}
+
 //MARK: - CreateHabitOrIrregularEventDelegate
 protocol CreateHabitOrIrregularEventDelegate: AnyObject {
     func createTrackers(tracker: Tracker, category: String)
+    func updateTracker(tracker: Tracker, category: String)
 }
 
 //MARK: - CreateHabitOrIrregularEventViewController
@@ -17,14 +25,15 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
     
     //MARK: - Properties
     weak var delegate: CreateHabitOrIrregularEventDelegate?
-    var typeOfTracker: TypeOfTracker?
     
-    enum TypeOfTracker {
-        case habit
-        case irregularEvent
-    }
+    var typeOfTracker: TypeOfTracker?
+    var editCategory: String?
+    var editTracker: Tracker?
+    var daysCount: Int?
     
     //MARK: - Private properties
+    private let trackerStore = TrackerStore.shared
+    
     private var category: String = ""
     private var emoji: [String] = [
         "🙂", "😻", "🌺", "🐶", "❤️", "😱",
@@ -64,6 +73,15 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         let label = UILabel()
         label.textColor = Color.blackDay
         label.font = .systemFont(ofSize: 16, weight: .medium)
+        return label
+    }()
+    
+    private lazy var completedDaysLabel: UILabel = {
+        let label = UILabel()
+        label.font = UIFont.systemFont(ofSize: 32, weight: .bold)
+        label.isHidden = true
+        label.textAlignment = .center
+        label.isHidden = true
         return label
     }()
     
@@ -205,10 +223,6 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         button.setTitle("Создать", for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
         button.setTitleColor(Color.whiteDay, for: .normal)
-        button.addTarget(
-            self,
-            action: #selector(didTapCreateButton),
-            for: .touchUpInside)
         return button
     }()
     
@@ -226,9 +240,10 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         createHabitOrIrregularEvent()
         layoutViews()
     }
-
+    
     private func updateCreateButton() {
         if (nameHabitTextField.text?.isEmpty == false) &&
+            (category.isEmpty == false) &&
             (shedule.isEmpty == false) &&
             (selectedEmoji != nil) &&
             (selectedColor != nil) {
@@ -245,13 +260,48 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
         case .habit:
             createHabitLabel.text = "Новая привычка"
             categoryButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+            createButton.addTarget(
+                self,
+                action: #selector(didTapCreateButton),
+                for: .touchUpInside)
         case .irregularEvent:
             createHabitLabel.text = "Новое нерегулярное событие"
             shedule = WeekDay.allCases
+            createButton.addTarget(
+                self,
+                action: #selector(didTapCreateButton),
+                for: .touchUpInside)
+        case .edit:
+            guard
+                let daysCount = daysCount,
+                let editTracker = editTracker,
+                let editCategory = editCategory
+            else { return }
+            createHabitLabel.text = "Редактирование привычки"
+            completedDaysLabel.isHidden = false
+            categoryButton.layer.maskedCorners = [.layerMaxXMinYCorner, .layerMinXMinYCorner]
+            completedDaysLabel.text = formatDaysText(forDays: daysCount)
+            createButton.setTitle("Сохранить", for: .normal)
+            createButton.addTarget(
+                self,
+                action: #selector(didTapSaveButton),
+                for: .touchUpInside)
+            nameHabitTextField.text = editTracker.name
+            updateCategory(category: editCategory)
+            createShedule(shedule: editTracker.shedule)
+            selectedEmoji = editTracker.emoji
+            selectedEmojiIndex = emoji.firstIndex(of: selectedEmoji ?? "")
+            selectedColor = editTracker.color
+            selectedColorIndex = color.firstIndex(of: selectedColor ?? Color.colorSelection1)
         case .none: break
         }
     }
+    
+    private func formatDaysText(forDays days: Int) -> String {
+        String.localizedStringWithFormat(NSLocalizedString("numberOfDays", comment: "numberOfDays"), days)
         
+    }
+    
     private func addViews() {
         [createHabitLabel,
          scrollView,
@@ -260,10 +310,11 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             view.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-
+        
         scrollView.addSubview(contentView)
-
-        [nameHabitTextField,
+        
+        [completedDaysLabel,
+         nameHabitTextField,
          categoryButton,
          selectedCategoryLabel,
          chevronCategoryImage,
@@ -272,8 +323,8 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             contentView.addSubview($0)
             $0.translatesAutoresizingMaskIntoConstraints = false
         }
-
-        if typeOfTracker == .habit {
+        
+        if typeOfTracker == .habit || typeOfTracker == .edit {
             [separatorLabel,
              sheduleButton,
              selectedSheduleLabel,
@@ -285,6 +336,8 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
     }
     
     private func layoutViews() {
+        let nameHabitTextFieldConstant: CGFloat = editTracker == nil ? 0 : 78
+        let contentHeightAnchor: CGFloat = editTracker == nil ? 741 : 843
         NSLayoutConstraint.activate([
             createHabitLabel.topAnchor.constraint(equalTo: view.topAnchor, constant: 27),
             createHabitLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -298,11 +351,16 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             contentView.leadingAnchor.constraint(equalTo: scrollView.leadingAnchor),
             contentView.trailingAnchor.constraint(equalTo: scrollView.trailingAnchor),
             contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor),
-            contentView.heightAnchor.constraint(equalToConstant: 741),
+            contentView.heightAnchor.constraint(equalToConstant: contentHeightAnchor),
             contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             
+            completedDaysLabel.topAnchor.constraint(equalTo: contentView.topAnchor),
+            completedDaysLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            completedDaysLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            completedDaysLabel.heightAnchor.constraint(equalToConstant: 38),
+            
             nameHabitTextField.heightAnchor.constraint(equalToConstant: 75),
-            nameHabitTextField.topAnchor.constraint(equalTo: contentView.topAnchor),
+            nameHabitTextField.topAnchor.constraint(equalTo: contentView.topAnchor, constant: nameHabitTextFieldConstant),
             nameHabitTextField.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
             nameHabitTextField.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             
@@ -315,12 +373,12 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             selectedCategoryLabel.leadingAnchor.constraint(equalTo: categoryButton.leadingAnchor, constant: 16),
             selectedCategoryLabel.topAnchor.constraint(equalTo: categoryButton.topAnchor, constant: 43),
             selectedCategoryLabel.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -56),
-
+            
             chevronCategoryImage.heightAnchor.constraint(equalToConstant: 24),
             chevronCategoryImage.widthAnchor.constraint(equalToConstant: 24),
             chevronCategoryImage.centerYAnchor.constraint(equalTo: categoryButton.centerYAnchor),
             chevronCategoryImage.trailingAnchor.constraint(equalTo: categoryButton.trailingAnchor, constant: -16),
-                        
+            
             cancelButton.heightAnchor.constraint(equalToConstant: 60),
             cancelButton.widthAnchor.constraint(equalToConstant: 166),
             cancelButton.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
@@ -332,7 +390,7 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             createButton.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
         
-        if typeOfTracker == .habit {
+        if typeOfTracker == .habit || typeOfTracker == .edit {
             NSLayoutConstraint.activate([
                 separatorLabel.topAnchor.constraint(equalTo: categoryButton.bottomAnchor),
                 separatorLabel.heightAnchor.constraint(equalToConstant: 0.5),
@@ -405,8 +463,24 @@ final class CreateHabitOrIrregularEventViewController: UIViewController {
             name: trackerName,
             color: selectedColor ?? Color.colorSelection1,
             emoji: selectedEmoji ?? "",
-            shedule: shedule)
+            shedule: shedule,
+            isPinned: false)
         delegate?.createTrackers(tracker: newTracker, category: category)
+        self.view.window?.rootViewController?.dismiss(animated: true)
+    }
+    
+    private func didTapSaveButton() {
+        guard let editTracker = editTracker else { return }
+        guard let trackerName = nameHabitTextField.text else { return }
+        
+        let newTracker = Tracker(
+            id: editTracker.id,
+            name: trackerName,
+            color: selectedColor ?? Color.colorSelection1,
+            emoji: selectedEmoji ?? "",
+            shedule: shedule,
+            isPinned: editTracker.isPinned)
+        delegate?.updateTracker(tracker: newTracker, category: category)
         self.view.window?.rootViewController?.dismiss(animated: true)
     }
 }
@@ -520,7 +594,6 @@ extension CreateHabitOrIrregularEventViewController: UICollectionViewDelegate, U
         viewForSupplementaryElementOfKind kind: String,
         at indexPath: IndexPath
     ) -> UICollectionReusableView {
-        
         guard let view = collectionView.dequeueReusableSupplementaryView(
             ofKind: kind,
             withReuseIdentifier: HeaderCell.identifier,

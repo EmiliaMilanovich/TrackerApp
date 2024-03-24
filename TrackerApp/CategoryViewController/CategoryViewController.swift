@@ -19,7 +19,7 @@ final class CategoryViewController: UIViewController {
     weak var delegate: CategoryViewControllerDelegate?
     var viewModel: CategoryViewModel
     
-    //MARK: - UiElements
+    //MARK: - UI Components
     private var categoryLabel: UILabel = {
         let label = UILabel()
         label.text = "Категория"
@@ -82,14 +82,14 @@ final class CategoryViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         configure()
+        try? viewModel.fetchCategories()
         checkEmptyCategories()
         
         viewModel.onChange = { [weak self] in
             self?.tableView.reloadData()
-            self?.checkEmptyCategories()
         }
     }
-    
+        
     //MARK: - Initializers
     init() {
         viewModel = CategoryViewModel()
@@ -108,9 +108,7 @@ final class CategoryViewController: UIViewController {
     }
     
     private func checkEmptyCategories() {
-        try? viewModel.fetchCategories()
-        tableView.reloadData()
-        
+        try? viewModel.fetchCategories()        
         if !viewModel.categories.isEmpty {
             stubView.isHidden = true
             tableView.isHidden = false
@@ -118,6 +116,7 @@ final class CategoryViewController: UIViewController {
             stubView.isHidden = false
             tableView.isHidden = true
         }
+        tableView.reloadData()
     }
     
     private func addViews() {
@@ -166,6 +165,7 @@ final class CategoryViewController: UIViewController {
     func didTapAddCategoryButton() {
         let createNewCategoryViewController = CreateNewCategoryViewController()
         createNewCategoryViewController.delegate = self
+        createNewCategoryViewController.typeOfCategory = .create
         present(createNewCategoryViewController, animated: true)
     }
 }
@@ -180,17 +180,21 @@ extension CategoryViewController: CreateNewCategoryViewControllerDelegate {
             tableView.reloadData()
         }
     }
+    
+    func reloadCategories() {
+        try? viewModel.fetchCategories()
+        tableView.reloadData()
+    }
 }
 
-// MARK: - UITableViewDelegate, UITableViewDataSource
-extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
+// MARK: - UITableViewDelegate
+extension CategoryViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let cell = tableView.cellForRow(at: indexPath) as? CategoryCell else { return }
-        cell.selectedCategory()
-        
         guard let delegate = delegate else { return }
         let category = viewModel.selectCategory(at: indexPath)
         delegate.updateCategory(category: category)
+        cell.selectedCategory()
         tableView.deselectRow(at: indexPath, animated: false)
         dismiss(animated: true)
     }
@@ -199,6 +203,38 @@ extension CategoryViewController: UITableViewDelegate, UITableViewDataSource {
         75
     }
     
+    func tableView(
+        _ tableView: UITableView,
+        contextMenuConfigurationForRowAt indexPath: IndexPath,
+        point: CGPoint
+    ) -> UIContextMenuConfiguration? {
+        
+        let configuration = UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { actions in
+            
+            let editAction = UIAction(title: "Редактировать") { [weak self] _ in
+                guard let self = self else { return }
+                let selectedCategory = self.viewModel.categories[indexPath.row].title
+                let createNewCategoryViewController = CreateNewCategoryViewController()
+                createNewCategoryViewController.typeOfCategory = .edit
+                createNewCategoryViewController.delegate = self
+                createNewCategoryViewController.editingCategoryName = selectedCategory
+                self.present(createNewCategoryViewController, animated: false)
+            }
+            
+            let deleteAction = UIAction(title: "Удалить", attributes: .destructive) { [weak self] _ in
+                guard let self = self else { return }
+                try? self.viewModel.removeCategory(atIndex: indexPath.row)
+                self.checkEmptyCategories()
+            }
+            
+            return UIMenu(children: [editAction, deleteAction])
+        }
+        return configuration
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension CategoryViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         viewModel.countCategories()
     }

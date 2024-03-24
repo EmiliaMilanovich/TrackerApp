@@ -21,7 +21,8 @@ final class CategoryViewModel {
     
     //MARK: - Private properties
     private var trackerCategoryStore = TrackerCategoryStore.shared
-            
+    private var trackerRecordStore = TrackerRecordStore.shared
+    
     // MARK: - Methods
     func fetchCategories() throws {
         do {
@@ -45,11 +46,23 @@ final class CategoryViewModel {
     func selectCategory(at indexPath: IndexPath) -> String {
         return categories[indexPath.row].title
     }
+    
+    func removeCategory(atIndex index: Int) throws {
+        let category = categories[index]
+        do {
+            guard let trackers = categories.first(where: { $0.title == category.title })?.trackers else { return }
+            trackers.forEach { try? trackerRecordStore.deleteAllRecordForID(for: $0.id) }
+            try trackerCategoryStore.deleteCategory(with: category.title)
+        } catch {
+            throw ErrorStore.error
+        }
+    }
 }
 
 // MARK: - TrackerCategoryStoreDelegate
 extension CategoryViewModel: TrackerCategoryStoreDelegate {
-    func didUpdateData(in store: TrackerCategoryStore) {
+    func didUpdateCategory() {
         try? fetchCategories()
     }
 }
+
